@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 
+type Health = { status: string }
+
 export default function App() {
   const [status, setStatus] = useState('loading')
 
   useEffect(() => {
     fetch('/api/health')
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
-      .then((data) => setStatus(data.status))
+      .then((data: Health) => setStatus(data.status))
       .catch(() => setStatus('backend unreachable'))
   }, [])
 

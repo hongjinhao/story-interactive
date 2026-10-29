@@ -1,6 +1,6 @@
 # Working agreement for AI tools in this repo
 
-Stack: FastAPI (backend/, port 8000) + React/Vite JS (frontend/, port 5173, proxies /api to the backend).
+Stack: FastAPI (backend/, port 8000) + React/Vite TypeScript (frontend/, port 5173, proxies /api to the backend).
 Run: `./dev.sh`    Test: `./test.sh`
 Python deps are managed with uv: `uv add <pkg>` (or `uv add --dev <pkg>`) in backend/. Never use pip.
 
