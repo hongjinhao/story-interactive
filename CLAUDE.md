@@ -2,6 +2,7 @@
 
 Stack: FastAPI (backend/, port 8000) + React/Vite JS (frontend/, port 5173, proxies /api to the backend).
 Run: `./dev.sh`    Test: `./test.sh`
+Python deps are managed with uv: `uv add <pkg>` (or `uv add --dev <pkg>`) in backend/. Never use pip.
 
 ## Guardrails
 1. Plan first. Before writing code, state the approach, the data shape, and the edge cases. Wait for approval.
