@@ -7,7 +7,8 @@ export default function App() {
 
   useEffect(() => {
     fetch('/api/health')
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      // 503 means the backend is up but the database isn't; its body says so
+      .then((r) => (r.ok || r.status === 503 ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((data: Health) => setStatus(data.status))
       .catch(() => setStatus('backend unreachable'))
   }, [])

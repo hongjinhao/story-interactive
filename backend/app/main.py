@@ -1,7 +1,18 @@
-from fastapi import FastAPI
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="Fullstack Starter")
+from app import db
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    db.init_db()
+    yield
+
+
+app = FastAPI(title="Fullstack Starter", lifespan=lifespan)
 
 # The Vite dev server proxies /api to this app, so CORS is not needed in dev.
 # It's here so the frontend still works if it is opened without the proxy.
@@ -14,5 +25,8 @@ app.add_middleware(
 
 
 @app.get("/api/health")
-def health():
-    return {"status": "ok"}
+def health(response: Response):
+    if not db.ping():
+        response.status_code = 503
+        return {"status": "database unreachable", "db": db.kind()}
+    return {"status": "ok", "db": db.kind()}
