@@ -11,7 +11,7 @@ cd frontend && npm install && cd ..
 ## Run
 ```bash
 ./dev.sh          # backend http://127.0.0.1:8000  frontend http://localhost:5173
-./test.sh         # backend tests + frontend build
+./test.sh         # lint + backend tests, lint + frontend build
 ```
 
 Open http://localhost:5173. It should say "Backend status: ok". If it says "backend unreachable", the backend isn't running.
