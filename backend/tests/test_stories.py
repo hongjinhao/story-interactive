@@ -117,3 +117,23 @@ def test_list_stories_same_time_ties_broken_by_id(client):
     finally:
         conn.close()
     assert [s["id"] for s in client.get("/api/stories").json()] == sorted(ids, reverse=True)
+
+
+# GET /api/stories/{id}
+
+
+def test_get_story_returns_story_with_root_node(client):
+    created = client.post("/api/stories", json={"idea": "a whispering well"}).json()
+    r = client.get(f"/api/stories/{created['id']}")
+    assert r.status_code == 200
+    assert r.json() == created
+
+
+def test_get_unknown_story_returns_404(client):
+    r = client.get("/api/stories/999")
+    assert r.status_code == 404
+    assert r.json() == {"detail": "Story 999 not found."}
+
+
+def test_get_story_with_non_numeric_id_returns_422(client):
+    assert client.get("/api/stories/abc").status_code == 422

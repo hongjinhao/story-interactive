@@ -1,6 +1,6 @@
 import random
 
-from app import db, llm
+from app import db, errors, llm
 from app.repositories import nodes, stories
 
 MIN_LEVELS, MAX_LEVELS = 5, 10
@@ -26,3 +26,10 @@ def create_story(conn, idea: str) -> dict:
 
 def list_stories(conn) -> list[dict]:
     return stories.list_all(conn)
+
+
+def get_story(conn, story_id: int) -> dict:
+    story = stories.get(conn, story_id)
+    if story is None:
+        raise errors.NotFound(f"Story {story_id} not found.")
+    return story
