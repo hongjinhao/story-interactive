@@ -14,8 +14,8 @@ export default function App() {
   }, [])
 
   return (
-    <main style={{ fontFamily: 'sans-serif', padding: 24 }}>
-      <h1>Fullstack Starter</h1>
+    <main className="p-6 font-sans">
+      <h1 className="text-2xl font-bold">Fullstack Starter</h1>
       <p>Backend status: <strong>{status}</strong></p>
     </main>
   )

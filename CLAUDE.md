@@ -10,6 +10,17 @@ FastAPI backend (`backend/`, port 8000) and React/Vite TypeScript frontend (`fro
 ```
 browser → Vite :5173 ──/api proxy──> FastAPI :8000 → app/db.py → SQLite (backend/app.db) | Postgres (docker)
 ```
+Backend layers (two, on purpose; don't add service or repository layers unless asked):
+- Routes (`backend/app/main.py`): HTTP handling, input validation, business rules and the SQL, together in the route.
+- `backend/app/db.py`: the database adapter. It owns connections, transactions and the SQLite/Postgres switch, and knows no tables. Routes never open their own connections.
+- If one rule gets tricky (e.g. an overlap check), pull it into a plain named function that takes `conn`, called from the route. That isn't a new layer. If `main.py` grows long, split it into one `APIRouter` file per resource.
+
+Frontend layers (three, matching the backend; no state library, no per-resource API functions unless asked):
+- `frontend/src/App.tsx`: the page. Holds only state shared between panels (e.g. the selected item) and passes it down as props. No fetching.
+- Feature components (one file each, e.g. `BookingForm.tsx`): load their own data in `useEffect`, own their loading/error/saving states, apply the UI rules, render. Endpoint paths are written here, e.g. `api<Item[]>('/api/items')`.
+- `frontend/src/api.ts`: the API client, the frontend's `db.py`. Shared response types, an `api<T>(path, init)` fetch wrapper and a `post<T>(path, data)` helper. It turns FastAPI errors (`{detail: string}`, or the 422 list) into one readable message and throws an `ApiError` carrying the HTTP status. Create it with the first feature; components never call `fetch` directly. The starter's `/api/health` fetch in `App.tsx` is the one exception, since a 503 there still carries a body to show.
+
+Styling is Tailwind v4: utility classes in `className`, loaded by the `@tailwindcss/vite` plugin and `@import "tailwindcss";` in `frontend/src/index.css`. No component library, no separate `.css` files per component.
 
 ## Commands
 - Run: `./dev.sh` (backend and frontend together)
@@ -32,6 +43,7 @@ browser → Vite :5173 ──/api proxy──> FastAPI :8000 → app/db.py → S
 - Always test with `./test.sh`, not bare `uv run pytest`: only `./test.sh` loads `.env`.
 - Placeholders differ: `?` for SQLite, `%s` for Postgres.
 - Schema files use `CREATE TABLE IF NOT EXISTS`, so editing an existing table does not change the dev database. After any schema edit, tell the human to reset it (see Commands). Tests always start fresh, so they won't catch a stale dev database.
+- Tailwind is v4, not v3. There is no `tailwind.config.js`, `postcss.config.js` or `npx tailwindcss init`, and no `@tailwind base/components/utilities` directives. Theme changes go in an `@theme { ... }` block in `frontend/src/index.css`.
 
 ## Guardrails
 1. Plan first. Before writing code, state the approach, the data shape, and the edge cases. Wait for approval.
