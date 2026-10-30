@@ -67,14 +67,14 @@ Build one endpoint at a time, each with its tests.
 
 Pieces:
 - [x] `conftest.py`: `fake_llm` fixture (a `FakeLLM` that records calls and raises `error` if set). The `client` fixture depends on it, so API tests never reach xAI.
-- [x] `schemas.py`: `StoryCreate` (idea trimmed, 1–300), `Story`. Still to add: `NodeOption`, `NodeView` (2d).
+- [x] `schemas.py`: `StoryCreate` (idea trimmed, 1–300), `Story`, `NodeOption`, `NodeView`.
 - [x] `llm.py`: `start_story(idea, max_level) -> Opening{title, content, option_a, option_b}`; `grok-4.20-0309-non-reasoning` via `xai_sdk` (model id checked against the API), `chat.parse` structured output, options ≤ 100 chars, 30 s client timeout. `DEADLINE_EXCEEDED` → `GenerationTimeout`; other gRPC errors, invalid output or a missing key → `GenerationFailed`. Tests: `tests/test_llm.py`. Real calls took about 2.2 s (`grok-4.3`, the first choice, took 7–11 s).
 - [ ] `llm.py`: `continue_story(idea, path, choice_text, level, max_level, final) -> Passage{content, option_a?, option_b?}` (Step 3, its first user).
 - [x] `repositories/stories.py`: `insert`, `list_all` (joins the root node for `root_node_id`), `get`.
-- [x] `repositories/nodes.py`: `insert`. Still to add: `get`, `children`, `path_to_root`.
+- [x] `repositories/nodes.py`: `insert`, `get` (joins story title + `max_level`), `children`. (`path_to_root` moves to Step 3, its first user.)
 - [x] `services/stories.py`: `create_story` (random `max_level` 5–10, call LLM, then insert story + root in one transaction), `list_stories`, `get_story` (`NotFound` → 404).
-- [ ] `services/nodes.py`: `get_node_view` (node + options with `child_id` + custom child if any + `can_add_custom`).
-- [x] `handlers/stories.py` (POST, list, get one). Still to add: `handlers/nodes.py`.
+- [x] `services/nodes.py`: `get_node_view` (node + options with `child_id` + custom child if any + `can_add_custom`).
+- [x] `handlers/stories.py` (POST, list, get one), `handlers/nodes.py` (get node).
 
 Tests (`tests/test_stories.py`, `tests/test_nodes.py`):
 - [x] create → 201, root node at level 1 with two options; idea trimmed; 300 chars accepted
@@ -82,8 +82,8 @@ Tests (`tests/test_stories.py`, `tests/test_nodes.py`):
 - [x] LLM timeout → 504, LLM failure → 502, and no story or node row left either way
 - [x] list empty → `[]`; list order newest first, includes `root_node_id`; same `created_at` → highest id first
 - [x] get story → 200 same as created; unknown story → 404; non-numeric id → 422
-- [ ] unknown node → 404
-- [ ] node view: `child_id` null before exploring, no custom option yet, `can_add_custom` true
+- [x] unknown node → 404; non-numeric id → 422
+- [x] node view: `child_id` null before exploring, no custom option yet, `can_add_custom` true; explored option carries `child_id`; custom branch listed third and sets `can_add_custom` false; child points to parent; ending has `options: []`
 
 ## Step 3: Core rules: choosing a path ★
 `POST /api/nodes/{id}/choose` with `{"slot": "a" | "b"}` or `{"slot": "custom", "text": "..."}`.

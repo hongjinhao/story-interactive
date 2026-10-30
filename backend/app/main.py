@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app import db, errors
-from app.handlers import health, stories
+from app.handlers import health, nodes, stories
 
 
 @asynccontextmanager
@@ -34,3 +34,4 @@ async def app_error(request: Request, exc: errors.AppError) -> JSONResponse:
 
 app.include_router(health.router)
 app.include_router(stories.router)
+app.include_router(nodes.router)
