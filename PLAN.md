@@ -8,14 +8,13 @@ Backend layers: handlers (`app/handlers/`) → services (`app/services/`) → re
 ---
 
 ## Step 0: Setup (no features)
-- [ ] `uv add xai-sdk` in `backend/`. Add `XAI_API_KEY=` to `.env.example`.
-- [ ] Create `app/handlers/`, `app/services/`, `app/repositories/` (each with `__init__.py`), plus `app/errors.py`, `app/schemas.py`, `app/llm.py`.
-- [ ] `errors.py`: `NotFound`, `Conflict`, `RuleViolation`, `GenerationTimeout`, `GenerationFailed`.
-- [ ] `main.py`: register exception handlers mapping them to 404 / 409 / 400 / 504 / 502 with `{"detail": message}`.
-- [ ] Move `/api/health` into `handlers/health.py` and include the router.
-- [ ] `conftest.py`: `fake_llm` fixture that monkeypatches `app.llm` functions with deterministic output and can be set to raise `GenerationTimeout` / `GenerationFailed`.
+- [x] `uv add xai-sdk` in `backend/`. Add `XAI_API_KEY=` to `.env.example`.
+- [x] Create `app/handlers/`, `app/services/`, `app/repositories/` (each with `__init__.py`) and `app/errors.py`. (`schemas.py`, `llm.py` and the `fake_llm` fixture are created in Step 2, where they're first used.)
+- [x] `errors.py`: `AppError` base with a `status_code`; `NotFound` 404, `Conflict` 409, `RuleViolation` 400, `GenerationFailed` 502, `GenerationTimeout` 504.
+- [x] `main.py`: one exception handler for `AppError` returning its status with `{"detail": message}`. Test: `tests/test_errors.py`.
+- [x] Move `/api/health` into `handlers/health.py` and include the router.
 
-**Done when:** `test_health.py` still passes.
+**Done when:** `test_health.py` and `test_errors.py` pass.
 
 ## Step 1: Schema (`backend/app/schema/postgres.sql`, replaces `items`)
 
@@ -65,6 +64,7 @@ Build one endpoint at a time, each with its tests.
 | 2d | `GET /api/nodes/{id}` | 200 node view (see SPEC.md) | 404 |
 
 Pieces:
+- [ ] `conftest.py`: `fake_llm` fixture that monkeypatches `app.llm` functions with deterministic output and can be set to raise `GenerationTimeout` / `GenerationFailed`.
 - [ ] `schemas.py`: `StoryCreate` (idea trimmed, 1–300), `Story`, `NodeOption`, `NodeView`.
 - [ ] `llm.py`:
   - `start_story(idea, max_level) -> Opening{title, content, option_a, option_b}`

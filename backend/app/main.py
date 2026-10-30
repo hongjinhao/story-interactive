@@ -1,9 +1,11 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
-from app import db
+from app import db, errors
+from app.handlers import health
 
 
 @asynccontextmanager
@@ -12,7 +14,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="Fullstack Starter", lifespan=lifespan)
+app = FastAPI(title="Story Interactive", lifespan=lifespan)
 
 # The Vite dev server proxies /api to this app, so CORS is not needed in dev.
 # It's here so the frontend still works if it is opened without the proxy.
@@ -24,9 +26,10 @@ app.add_middleware(
 )
 
 
-@app.get("/api/health")
-def health(response: Response):
-    if not db.ping():
-        response.status_code = 503
-        return {"status": "database unreachable", "db": db.kind()}
-    return {"status": "ok", "db": db.kind()}
+# Every domain error carries its own status code (404, 409, 400, 502, 504).
+@app.exception_handler(errors.AppError)
+async def app_error(request: Request, exc: errors.AppError) -> JSONResponse:
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
+
+
+app.include_router(health.router)
