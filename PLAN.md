@@ -131,7 +131,7 @@ Progress:
 - [x] 4b theme: `@theme` tokens + `float`/`dangle` keyframes in `index.css`, Creepster + Lora from Google Fonts in `index.html`, title "Story Interactive". Contrast checked: all text pairs ≥ 6.5:1; added `tomb` (#75649a, 3.5:1 on crypt) for input borders, since `crypt-edge` is only 1.2:1
 - [x] 4c `App.tsx` shell: header (Creepster title, tagline), main column (max-w-3xl, 16px gutters on phones), health in the footer, red alert banner when the backend or database is down. `nodeId` state arrives with the first component that opens a story (4e).
 - [x] 4d `SpookyLoader.tsx` (+ `Ghost.tsx`, the shared inline-SVG ghost also used by 4h): full-screen overlay that blocks double clicks, floating ghost (`motion-reduce` stops it), message in Lora italic, "still working" after 10 s, `role="status"` + `aria-live`
-- [ ] 4e `NewStoryForm.tsx`
+- [x] 4e `NewStoryForm.tsx`: intro, idea textarea (`maxLength` 300, live counter, Enter submits / Shift+Enter new line), "Summon a tale" disabled while blank or saving, inline `role="alert"` error, loader while generating, then `onOpen(root_node_id)`. `App.tsx` gains `nodeId` state with a temporary placeholder for the story view. Checked through the Vite proxy: 422 on 301 chars, 201 in 2.3 s on a real idea.
 - [ ] 4f `StoryList.tsx`
 - [ ] 4g `StoryView.tsx`
 - [ ] 4h `HauntedDecor.tsx`

@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import NewStoryForm from './NewStoryForm.tsx'
 
 type Health = { status: string }
 
 export default function App() {
   const [status, setStatus] = useState('loading')
+  const [nodeId, setNodeId] = useState<number | null>(null) // null = home
 
   useEffect(() => {
     fetch('/api/health')
@@ -27,6 +29,22 @@ export default function App() {
           <p role="alert" className="mb-6 rounded-xl border border-blood bg-crypt p-4 text-blood">
             The spirits can't be reached ({status}). Start the backend with <code>./dev.sh</code>, then reload.
           </p>
+        )}
+
+        {nodeId === null ? (
+          <NewStoryForm onOpen={setNodeId} />
+        ) : (
+          // Placeholder until StoryView (step 4g)
+          <section className="rounded-2xl border border-crypt-edge bg-crypt p-5 sm:p-8">
+            <p>Your tale has begun (node {nodeId}). The story view arrives in step 4g.</p>
+            <button
+              type="button"
+              onClick={() => setNodeId(null)}
+              className="mt-4 min-h-11 rounded-xl border-2 border-tomb px-5 font-semibold hover:border-pumpkin focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-pumpkin"
+            >
+              Back to home
+            </button>
+          </section>
         )}
       </main>
 
