@@ -8,7 +8,11 @@
 
 
 ## Users & actions → API
-<!-- Who uses it? What can they do? Verbs are endpoints: create · list · get · edit · delete · special (book, dispense).
+<!-- Who uses it? What can they do? Each action is an endpoint: the path is a plural noun, the method is the verb.
+     POST /api/items create · GET /api/items list · GET /api/items/{id} get · PATCH edit · DELETE delete.
+     Special (book, dispense): POST /api/items/{id}/dispense. Body = the change ({quantity}), not the new value.
+     Then walk each screen: what must it read before the user can act (dropdowns)? Add those GETs.
+     For each list: users create it (add a POST) or assume it's seeded (no POST, still needs its GET).
      Errors: body → 422 · id → 404 · duplicate/clash → 409 · broken rule → 400/409.
      Success: create → 201 + row · list → 200 [] in a stated order · delete → 204 -->
 | Method | Path | Body | Success | Errors |
@@ -17,7 +21,13 @@
 | GET    |      |      | 200 []  |        |
 
 
-## Data → tables
+## Page
+<!-- Per component: what it shows (sorted?), what it reads (GETs, dropdowns),
+     what it writes, where errors show. After a write: what refetches? Missing a GET? Add it to the API. -->
+- component1, shows list, reads GET /api/items
+
+
+## Nouns → tables
 <!-- Tables are nouns. Fields should support the rules (plus what the UI shows).
      Constraints: NOT NULL · UNIQUE · FK (on delete: block / cascade?) · CHECK.
      Money → integer cents · times → UTC text. Don't use end, order, user as column names. -->
@@ -47,5 +57,8 @@ R1. ★
 
 
 ## Assumptions
-<!-- "Your call" answers and anything decided without asking. -->
+<!-- "Your call" answers and anything decided without asking. Defaults below: say them out loud in
+     one line, don't spend a question on them. Delete any the interviewer overrides. -->
+- API is JSON REST under `/api`: nouns as resources, standard status codes (see table above).
+  Special actions are `POST /api/<resource>/{id}/<action>`.
 - 
