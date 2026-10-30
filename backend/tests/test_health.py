@@ -11,24 +11,15 @@ def test_health(client):
     assert r.json() == {"status": "ok", "db": db.kind()}
 
 
-def test_schema_seeds_demo_items(client):
+def test_constraint_violation_raises_integrity_error(client):
     conn = db.connect()
     try:
-        names = [row["name"] for row in conn.execute("SELECT name FROM items ORDER BY name")]
-    finally:
-        conn.close()
-    assert names == ["apples", "pears", "plums"]
-
-
-def test_unique_constraint_raises_integrity_error(client):
-    conn = db.connect()
-    try:
-        insert = "INSERT INTO items (name, qty) VALUES ('apples', 1)"
+        insert = "INSERT INTO stories (title, idea, max_level) VALUES ('T', 'idea', 11)"
         try:
             conn.execute(insert)
         except db.IntegrityError:
             return
-        raise AssertionError("duplicate name was accepted")
+        raise AssertionError("max_level 11 was accepted")
     finally:
         conn.close()
 
@@ -38,11 +29,11 @@ def test_transaction_rolls_back_on_error(client):
     try:
         try:
             with db.transaction(conn):
-                conn.execute("INSERT INTO items (name, qty) VALUES ('kiwis', 5)")
-                conn.execute("INSERT INTO items (name, qty) VALUES ('figs', -1)")  # fails CHECK
+                conn.execute("INSERT INTO stories (title, idea, max_level) VALUES ('kept?', 'i', 5)")
+                conn.execute("INSERT INTO stories (title, idea, max_level) VALUES ('bad', 'i', 4)")
         except db.IntegrityError:
             pass
-        count = conn.execute("SELECT COUNT(*) AS n FROM items WHERE name = 'kiwis'").fetchone()
+        count = conn.execute("SELECT COUNT(*) AS n FROM stories WHERE title = 'kept?'").fetchone()
     finally:
         conn.close()
     assert count["n"] == 0

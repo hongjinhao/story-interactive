@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS nodes (
     story_id    INTEGER NOT NULL REFERENCES stories(id) ON DELETE CASCADE,
     parent_id   INTEGER REFERENCES nodes(id) ON DELETE CASCADE,      -- NULL = root
     slot        TEXT CHECK (slot IN ('a', 'b', 'custom')),             -- choice that led here
-    choice_text TEXT CHECK (length(choice_text) <= 100),               -- words of that choice
+    choice_text TEXT CHECK (length(choice_text) BETWEEN 1 AND 100),         -- words of that choice
     level       INTEGER NOT NULL CHECK (level BETWEEN 1 AND 10),
     content     TEXT NOT NULL,
     option_a    TEXT,                                                  -- NULL on an ending
@@ -50,6 +50,8 @@ CREATE UNIQUE INDEX IF NOT EXISTS one_root_per_story ON nodes (story_id) WHERE p
 
 - `UNIQUE (parent_id, slot)` enforces the custom cap (R5) and settles concurrent requests: the losing insert gets `IntegrityError` and is served the winner's node.
 - Children and the path to the root are queried (recursive CTE), never stored.
+
+- [x] Schema in `postgres.sql`; constraint tests in `tests/test_schema.py`; `test_health.py` adapter tests moved from `items` to `stories`.
 
 **Done when:** the app starts on a fresh DB and both tables exist. Reset dev DB: `docker compose down -v && docker compose up -d`.
 
