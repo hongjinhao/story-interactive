@@ -130,7 +130,7 @@ Progress:
 - [x] 4a `api.ts`: types, `api`/`post`, `ApiError` (status 0 = server unreachable), 422 lists joined into one message (`idea: String should have at most 300 characters`), 204 handled
 - [x] 4b theme: `@theme` tokens + `float`/`dangle` keyframes in `index.css`, Creepster + Lora from Google Fonts in `index.html`, title "Story Interactive". Contrast checked: all text pairs ≥ 6.5:1; added `tomb` (#75649a, 3.5:1 on crypt) for input borders, since `crypt-edge` is only 1.2:1
 - [x] 4c `App.tsx` shell: header (Creepster title, tagline), main column (max-w-3xl, 16px gutters on phones), health in the footer, red alert banner when the backend or database is down. `nodeId` state arrives with the first component that opens a story (4e).
-- [ ] 4d `SpookyLoader.tsx`
+- [x] 4d `SpookyLoader.tsx` (+ `Ghost.tsx`, the shared inline-SVG ghost also used by 4h): full-screen overlay that blocks double clicks, floating ghost (`motion-reduce` stops it), message in Lora italic, "still working" after 10 s, `role="status"` + `aria-live`
 - [ ] 4e `NewStoryForm.tsx`
 - [ ] 4f `StoryList.tsx`
 - [ ] 4g `StoryView.tsx`
