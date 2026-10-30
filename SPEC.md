@@ -31,7 +31,7 @@
 <!-- Tables are nouns. Fields should support the rules (plus what the UI shows).
      Constraints: NOT NULL · UNIQUE · FK (on delete: block / cascade?) · CHECK.
      Money → integer cents · times → UTC text. Don't use end, order, user as column names. -->
-- table(id, field NOT NULL, ...)
+- table(id PK, field NOT NULL UNIQUE, FK...)
 
 
 ## Rules
