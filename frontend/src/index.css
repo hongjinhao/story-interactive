@@ -1,1 +1,54 @@
 @import "tailwindcss";
+
+/* Halloween theme. Text pairs are checked against WCAG: bone on night 16.7:1, mist on crypt 8.6:1,
+   night text on pumpkin 8.1:1, blood on crypt 6.5:1. Input borders (tomb) are 3.5:1 on crypt. */
+@theme {
+  --color-night: #0d0a14; /* page background */
+  --color-crypt: #1a1325; /* cards, panels */
+  --color-crypt-edge: #2e2340; /* decorative card borders */
+  --color-tomb: #75649a; /* input borders, 3:1+ so fields are easy to find */
+  --color-bone: #f2ecdf; /* main text */
+  --color-mist: #b8aecb; /* secondary text */
+  --color-pumpkin: #ff8c1a; /* primary buttons (night text on top), focus ring */
+  --color-slime: #8fe36b; /* explored marker */
+  --color-blood: #ff6b6b; /* errors */
+
+  --font-spooky: "Creepster", "Lora", Georgia, serif; /* headings only */
+  --font-story: "Lora", Georgia, serif; /* story passages */
+
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-dangle: dangle 5s ease-in-out infinite;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-12px);
+    }
+  }
+
+  @keyframes dangle {
+    0%,
+    100% {
+      transform: rotate(-4deg);
+    }
+    50% {
+      transform: rotate(4deg);
+    }
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: dark; /* native scrollbars and form controls match the theme */
+  }
+
+  body {
+    background-color: var(--color-night);
+    color: var(--color-bone);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+}

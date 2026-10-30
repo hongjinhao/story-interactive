@@ -126,6 +126,16 @@ Tests:
 | 4g | `StoryView.tsx` | title, "Level n of max", passage, option buttons (👣 marks explored), custom input with a 0/100 counter (disabled with a reason when a custom branch exists), ↑ Go back (parent), Back to home; ending shows "The End", Start over (root), Home; inline errors; on 409 refetch the node | `GET /api/nodes/{id}`, `POST /api/nodes/{id}/choose` |
 | 4h | `HauntedDecor.tsx` | ghosts, cobwebs, spiders (below) | none |
 
+Progress:
+- [x] 4a `api.ts`: types, `api`/`post`, `ApiError` (status 0 = server unreachable), 422 lists joined into one message (`idea: String should have at most 300 characters`), 204 handled
+- [x] 4b theme: `@theme` tokens + `float`/`dangle` keyframes in `index.css`, Creepster + Lora from Google Fonts in `index.html`, title "Story Interactive". Contrast checked: all text pairs ≥ 6.5:1; added `tomb` (#75649a, 3.5:1 on crypt) for input borders, since `crypt-edge` is only 1.2:1
+- [ ] 4c `App.tsx`
+- [ ] 4d `SpookyLoader.tsx`
+- [ ] 4e `NewStoryForm.tsx`
+- [ ] 4f `StoryList.tsx`
+- [ ] 4g `StoryView.tsx`
+- [ ] 4h `HauntedDecor.tsx`
+
 ### Halloween look: spooky but readable
 Palette (`@theme` tokens):
 
@@ -133,7 +143,8 @@ Palette (`@theme` tokens):
 |---|---|---|
 | `night` | `#0d0a14` | page background |
 | `crypt` | `#1a1325` | cards |
-| `crypt-edge` | `#2e2340` | borders |
+| `crypt-edge` | `#2e2340` | decorative card borders |
+| `tomb` | `#75649a` | input borders (3.5:1 on crypt) |
 | `bone` | `#f2ecdf` | main text (about 17:1 on night) |
 | `mist` | `#b8aecb` | secondary text |
 | `pumpkin` | `#ff8c1a` | primary buttons (dark text on top), focus ring |
