@@ -69,7 +69,7 @@ Pieces:
 - [x] `conftest.py`: `fake_llm` fixture (a `FakeLLM` that records calls and raises `error` if set). The `client` fixture depends on it, so API tests never reach xAI.
 - [x] `schemas.py`: `StoryCreate` (idea trimmed, 1–300), `Story`, `NodeOption`, `NodeView`.
 - [x] `llm.py`: `start_story(idea, max_level) -> Opening{title, content, option_a, option_b}`; `grok-4.20-0309-non-reasoning` via `xai_sdk` (model id checked against the API), `chat.parse` structured output, options ≤ 100 chars, 30 s client timeout. `DEADLINE_EXCEEDED` → `GenerationTimeout`; other gRPC errors, invalid output or a missing key → `GenerationFailed`. Tests: `tests/test_llm.py`. Real calls took about 2.2 s (`grok-4.3`, the first choice, took 7–11 s).
-- [ ] `llm.py`: `continue_story(idea, path, choice_text, level, max_level, final) -> Passage{content, option_a?, option_b?}` (Step 3, its first user).
+- [x] `llm.py`: `continue_story(idea, path, choice_text, level, max_level, final) -> Passage | Ending` (built in Step 3, its first user).
 - [x] `repositories/stories.py`: `insert`, `list_all` (joins the root node for `root_node_id`), `get`.
 - [x] `repositories/nodes.py`: `insert`, `get` (joins story title + `max_level`), `children`. (`path_to_root` moves to Step 3, its first user.)
 - [x] `services/stories.py`: `create_story` (random `max_level` 5–10, call LLM, then insert story + root in one transaction), `list_stories`, `get_story` (`NotFound` → 404).
@@ -100,15 +100,18 @@ Service logic, in order:
 
 Walking up needs no endpoint: the UI fetches `GET /api/nodes/{parent_id}`.
 
+Built: `llm.continue_story` (`Passage` with two options, or `Ending` on the final level; real calls about 2–3 s), `nodes.child`, `nodes.path_to_root` (recursive CTE), `nodes.get` now also returns the story's `idea`, `schemas.ChooseRequest`, `services/nodes.choose`, the handler (201 generated / 200 walked). Same custom text is compared ignoring case. Tests: `tests/test_choose.py`, plus `continue_story` in `tests/test_llm.py`.
+
 Tests:
-- [ ] choose `a` → 201, again → 200 same child, LLM called once
-- [ ] custom → 201, and the parent's view now lists it, `can_add_custom` false
-- [ ] second different custom → 409; same custom text → 200
-- [ ] custom 101 chars / blank / missing text → 422; `a` with text → 422; unknown slot → 422
-- [ ] with `max_level` fixed at 5, four choices reach a level-5 node with `is_ending` true and no options
-- [ ] choose at an ending → 400
-- [ ] unknown node → 404
-- [ ] LLM timeout → 504 and no child created
+- [x] choose `a` → 201, again → 200 same child, LLM called once; a and b lead to different children; parent shows the explored child; LLM gets the idea, story so far and choice
+- [x] custom → 201 (text trimmed), and the parent's view now lists it, `can_add_custom` false
+- [x] second different custom → 409; same custom text (any case) → 200; 100-char custom accepted
+- [x] custom 101 chars / blank / missing / non-string text → 422; `a` with text → 422; unknown or missing slot → 422; LLM not called
+- [x] with `max_level` fixed at 5, four choices reach a level-5 node with `is_ending` true and no options; only the last call is `final`
+- [x] choose at an ending → 400 (preset and custom)
+- [x] unknown node → 404
+- [x] LLM timeout → 504 / failure → 502 and no child created
+- [x] race: another request creates the same preset branch mid-generation → 200 with the winner's node; a different custom → 409
 
 ## Step 4: UI (one component per change)
 

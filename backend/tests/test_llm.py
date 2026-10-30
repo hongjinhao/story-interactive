@@ -24,17 +24,22 @@ class FakeRpcError(grpc.RpcError):
         return self._code
 
 
-def use_client(monkeypatch, answer):
-    """`answer` is the JSON text the model returns, or an exception the call raises."""
+def use_client(monkeypatch, answer) -> list[dict]:
+    """`answer` is the JSON text the model returns, or an exception the call raises.
+    Returns the list that collects each request's kwargs (model, messages)."""
+    sent: list[dict] = []
 
     def parse(shape):
         if isinstance(answer, Exception):
             raise answer
         return None, shape.model_validate_json(answer)
 
-    chat = SimpleNamespace(parse=parse)
-    client = SimpleNamespace(chat=SimpleNamespace(create=lambda **kwargs: chat))
-    monkeypatch.setattr(llm, "_client", lambda: client)
+    def create(**kwargs):
+        sent.append(kwargs)
+        return SimpleNamespace(parse=parse)
+
+    monkeypatch.setattr(llm, "_client", lambda: SimpleNamespace(chat=SimpleNamespace(create=create)))
+    return sent
 
 
 def test_start_story_returns_parsed_opening(monkeypatch):
@@ -79,3 +84,34 @@ def test_missing_api_key_raises_generation_failed(monkeypatch):
             llm.start_story("idea", 5)
     finally:
         llm._client.cache_clear()
+
+
+PATH = [
+    {"level": 1, "choice_text": None, "content": "Fog rolls over the road."},
+    {"level": 2, "choice_text": "Follow the lantern", "content": "The lantern bobs ahead."},
+]
+GOOD_PASSAGE = {"content": "You reach a gate.", "option_a": "Open it", "option_b": "Climb it"}
+
+
+def test_continue_story_returns_passage_with_story_so_far(monkeypatch):
+    sent = use_client(monkeypatch, json.dumps(GOOD_PASSAGE))
+    passage = llm.continue_story("a lantern in the fog", PATH, "Run after it", 3, 6, final=False)
+    assert passage == llm.Passage(**GOOD_PASSAGE)
+    prompt = str(sent[0]["messages"][1])
+    for part in ("a lantern in the fog", "Passage 1: Fog rolls over the road.",
+                 "Follow the lantern", "Passage 2: The lantern bobs ahead.", "Run after it",
+                 "passage 3 of 6"):
+        assert part in prompt
+
+
+def test_final_passage_is_an_ending_without_options(monkeypatch):
+    sent = use_client(monkeypatch, json.dumps({"content": "The fog lifts. The end."}))
+    ending = llm.continue_story("idea", PATH, "Run after it", 6, 6, final=True)
+    assert ending == llm.Ending(content="The fog lifts. The end.")
+    assert "final passage" in str(sent[0]["messages"][1])
+
+
+def test_non_final_answer_without_options_raises_generation_failed(monkeypatch):
+    use_client(monkeypatch, json.dumps({"content": "The fog lifts."}))
+    with pytest.raises(errors.GenerationFailed):
+        llm.continue_story("idea", PATH, "Run after it", 3, 6, final=False)

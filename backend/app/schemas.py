@@ -3,9 +3,10 @@
 from datetime import datetime
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, StringConstraints
+from pydantic import BaseModel, StringConstraints, model_validator
 
 Idea = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=300)]
+CustomText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
 
 
 class StoryCreate(BaseModel):
@@ -19,6 +20,19 @@ class Story(BaseModel):
     max_level: int
     root_node_id: int
     created_at: datetime
+
+
+class ChooseRequest(BaseModel):
+    slot: Literal["a", "b", "custom"]
+    text: CustomText | None = None  # only for "custom"
+
+    @model_validator(mode="after")
+    def text_only_for_custom(self):
+        if self.slot == "custom" and self.text is None:
+            raise ValueError("A custom action needs text (1 to 100 characters).")
+        if self.slot != "custom" and self.text is not None:
+            raise ValueError("Only a custom action takes text.")
+        return self
 
 
 class NodeOption(BaseModel):

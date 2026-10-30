@@ -12,9 +12,9 @@ def insert(conn, *, story_id: int, level: int, content: str, option_a: str | Non
 
 
 def get(conn, node_id: int) -> dict | None:
-    """The node plus its story's title and max_level."""
+    """The node plus its story's title, idea and max_level."""
     row = conn.execute(
-        """SELECT n.*, s.title AS story_title, s.max_level
+        """SELECT n.*, s.title AS story_title, s.idea, s.max_level
            FROM nodes n
            JOIN stories s ON s.id = n.story_id
            WHERE n.id = %s""",
@@ -26,5 +26,27 @@ def get(conn, node_id: int) -> dict | None:
 def children(conn, node_id: int) -> list[dict]:
     rows = conn.execute(
         "SELECT id, slot, choice_text FROM nodes WHERE parent_id = %s", (node_id,)
+    ).fetchall()
+    return [dict(row) for row in rows]
+
+
+def child(conn, node_id: int, slot: str) -> dict | None:
+    row = conn.execute(
+        "SELECT * FROM nodes WHERE parent_id = %s AND slot = %s", (node_id, slot)
+    ).fetchone()
+    return dict(row) if row else None
+
+
+def path_to_root(conn, node_id: int) -> list[dict]:
+    """The node and its ancestors, root first."""
+    rows = conn.execute(
+        """WITH RECURSIVE path AS (
+               SELECT id, parent_id, level, choice_text, content FROM nodes WHERE id = %s
+               UNION ALL
+               SELECT n.id, n.parent_id, n.level, n.choice_text, n.content
+               FROM nodes n JOIN path p ON n.id = p.parent_id
+           )
+           SELECT * FROM path ORDER BY level""",
+        (node_id,),
     ).fetchall()
     return [dict(row) for row in rows]
