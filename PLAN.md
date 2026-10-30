@@ -70,17 +70,17 @@ Pieces:
 - [x] `schemas.py`: `StoryCreate` (idea trimmed, 1–300), `Story`. Still to add: `NodeOption`, `NodeView` (2d).
 - [x] `llm.py`: `start_story(idea, max_level) -> Opening{title, content, option_a, option_b}`; `grok-4.20-0309-non-reasoning` via `xai_sdk` (model id checked against the API), `chat.parse` structured output, options ≤ 100 chars, 30 s client timeout. `DEADLINE_EXCEEDED` → `GenerationTimeout`; other gRPC errors, invalid output or a missing key → `GenerationFailed`. Tests: `tests/test_llm.py`. Real calls took about 2.2 s (`grok-4.3`, the first choice, took 7–11 s).
 - [ ] `llm.py`: `continue_story(idea, path, choice_text, level, max_level, final) -> Passage{content, option_a?, option_b?}` (Step 3, its first user).
-- [x] `repositories/stories.py`: `insert`. Still to add: `list_all`, `get` (with `root_node_id`).
+- [x] `repositories/stories.py`: `insert`, `list_all` (joins the root node for `root_node_id`). Still to add: `get`.
 - [x] `repositories/nodes.py`: `insert`. Still to add: `get`, `children`, `path_to_root`.
-- [x] `services/stories.py`: `create_story` (random `max_level` 5–10, call LLM, then insert story + root in one transaction). Still to add: `list_stories`, `get_story`.
+- [x] `services/stories.py`: `create_story` (random `max_level` 5–10, call LLM, then insert story + root in one transaction), `list_stories`. Still to add: `get_story`.
 - [ ] `services/nodes.py`: `get_node_view` (node + options with `child_id` + custom child if any + `can_add_custom`).
-- [x] `handlers/stories.py` (POST). Still to add: GETs, `handlers/nodes.py`.
+- [x] `handlers/stories.py` (POST, list). Still to add: get one, `handlers/nodes.py`.
 
 Tests (`tests/test_stories.py`, `tests/test_nodes.py`):
 - [x] create → 201, root node at level 1 with two options; idea trimmed; 300 chars accepted
 - [x] blank, whitespace-only, 301-char, non-string and missing idea → 422, LLM not called
 - [x] LLM timeout → 504, LLM failure → 502, and no story or node row left either way
-- [ ] list empty → `[]`; list order newest first
+- [x] list empty → `[]`; list order newest first, includes `root_node_id`; same `created_at` → highest id first
 - [ ] unknown story → 404; unknown node → 404
 - [ ] node view: `child_id` null before exploring, no custom option yet, `can_add_custom` true
 

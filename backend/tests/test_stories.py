@@ -91,3 +91,29 @@ def test_llm_failure_returns_502_and_saves_nothing(client, fake_llm):
     assert r.status_code == 502
     assert count("stories") == 0
     assert count("nodes") == 0
+
+
+# GET /api/stories
+
+
+def test_list_stories_empty(client):
+    r = client.get("/api/stories")
+    assert r.status_code == 200
+    assert r.json() == []
+
+
+def test_list_stories_newest_first_with_root_node(client):
+    created = [client.post("/api/stories", json={"idea": f"idea {i}"}).json() for i in range(3)]
+    r = client.get("/api/stories")
+    assert r.status_code == 200
+    assert r.json() == list(reversed(created))
+
+
+def test_list_stories_same_time_ties_broken_by_id(client):
+    ids = [client.post("/api/stories", json={"idea": f"idea {i}"}).json()["id"] for i in range(3)]
+    conn = db.connect()
+    try:
+        conn.execute("UPDATE stories SET created_at = '2026-10-31T00:00:00Z'")
+    finally:
+        conn.close()
+    assert [s["id"] for s in client.get("/api/stories").json()] == sorted(ids, reverse=True)

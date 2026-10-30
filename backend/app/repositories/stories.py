@@ -4,3 +4,14 @@ def insert(conn, title: str, idea: str, max_level: int) -> dict:
         (title, idea, max_level),
     ).fetchone()
     return dict(row)
+
+
+def list_all(conn) -> list[dict]:
+    """Every story with its root node id, newest first (ties: highest id first)."""
+    rows = conn.execute(
+        """SELECT s.*, n.id AS root_node_id
+           FROM stories s
+           JOIN nodes n ON n.story_id = s.id AND n.parent_id IS NULL
+           ORDER BY s.created_at DESC, s.id DESC"""
+    ).fetchall()
+    return [dict(row) for row in rows]

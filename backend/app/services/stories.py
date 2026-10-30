@@ -22,3 +22,7 @@ def create_story(conn, idea: str) -> dict:
             option_b=opening.option_b,
         )
     return {**story, "root_node_id": root["id"]}
+
+
+def list_stories(conn) -> list[dict]:
+    return stories.list_all(conn)
