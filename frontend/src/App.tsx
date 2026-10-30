@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import NewStoryForm from './NewStoryForm.tsx'
+import StoryList from './StoryList.tsx'
 
 type Health = { status: string }
 
@@ -32,7 +33,10 @@ export default function App() {
         )}
 
         {nodeId === null ? (
-          <NewStoryForm onOpen={setNodeId} />
+          <>
+            <NewStoryForm onOpen={setNodeId} />
+            <StoryList onOpen={setNodeId} />
+          </>
         ) : (
           // Placeholder until StoryView (step 4g)
           <section className="rounded-2xl border border-crypt-edge bg-crypt p-5 sm:p-8">

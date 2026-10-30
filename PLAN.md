@@ -132,7 +132,7 @@ Progress:
 - [x] 4c `App.tsx` shell: header (Creepster title, tagline), main column (max-w-3xl, 16px gutters on phones), health in the footer, red alert banner when the backend or database is down. `nodeId` state arrives with the first component that opens a story (4e).
 - [x] 4d `SpookyLoader.tsx` (+ `Ghost.tsx`, the shared inline-SVG ghost also used by 4h): full-screen overlay that blocks double clicks, floating ghost (`motion-reduce` stops it), message in Lora italic, "still working" after 10 s, `role="status"` + `aria-live`
 - [x] 4e `NewStoryForm.tsx`: intro, idea textarea (`maxLength` 300, live counter, Enter submits / Shift+Enter new line), "Summon a tale" disabled while blank or saving, inline `role="alert"` error, loader while generating, then `onOpen(root_node_id)`. `App.tsx` gains `nodeId` state with a temporary placeholder for the story view. Checked through the Vite proxy: 422 on 301 chars, 201 in 2.3 s on a real idea.
-- [ ] 4f `StoryList.tsx`
+- [x] 4f `StoryList.tsx`: "Tales already told", cards in a 1/2-column grid (title, 2-line idea, date · levels), whole card is one button that opens the root node; loading line, empty state, inline error. Remounts (so refetches) whenever the player returns home.
 - [ ] 4g `StoryView.tsx`
 - [ ] 4h `HauntedDecor.tsx`
 
