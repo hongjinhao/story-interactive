@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from psycopg import sql
 from psycopg.conninfo import conninfo_to_dict, make_conninfo
 
-from app import db
+from app import db, llm
 from app.main import app
 
 # A separate database from the dev one. Created on first use, emptied before each test.
@@ -32,10 +32,36 @@ def reset_postgres_test_db(url: str) -> None:
         pytest.fail(f"Postgres isn't reachable (run `docker compose up -d`): {e}")
 
 
+class FakeLLM:
+    """Stands in for app.llm: deterministic answers, records calls, and raises `error` if set."""
+
+    def __init__(self):
+        self.calls: list[tuple] = []
+        self.error: Exception | None = None
+
+    def start_story(self, idea: str, max_level: int) -> llm.Opening:
+        self.calls.append(("start_story", idea, max_level))
+        if self.error:
+            raise self.error
+        return llm.Opening(
+            title="The Haunted Test",
+            content=f"Your tale begins: {idea}",
+            option_a="Open the creaking door",
+            option_b="Run back to the road",
+        )
+
+
 @pytest.fixture
-def client(tmp_path, monkeypatch):
+def fake_llm(monkeypatch):
+    fake = FakeLLM()
+    monkeypatch.setattr(llm, "start_story", fake.start_story)
+    return fake
+
+
+@pytest.fixture
+def client(tmp_path, monkeypatch, fake_llm):
     """Tests run on the database .env picks (./test.sh loads it), never on the dev data:
-    a fresh SQLite file, or the emptied Postgres test database."""
+    a fresh SQLite file, or the emptied Postgres test database. The LLM is always the fake."""
     if db.kind() == "sqlite":
         url = f"sqlite:///{tmp_path / 'test.db'}"
     else:

@@ -66,22 +66,20 @@ Build one endpoint at a time, each with its tests.
 | 2d | `GET /api/nodes/{id}` | 200 node view (see SPEC.md) | 404 |
 
 Pieces:
-- [ ] `conftest.py`: `fake_llm` fixture that monkeypatches `app.llm` functions with deterministic output and can be set to raise `GenerationTimeout` / `GenerationFailed`.
-- [ ] `schemas.py`: `StoryCreate` (idea trimmed, 1–300), `Story`, `NodeOption`, `NodeView`.
-- [ ] `llm.py`:
-  - `start_story(idea, max_level) -> Opening{title, content, option_a, option_b}`
-  - `continue_story(idea, path, choice_text, level, max_level, final) -> Passage{content, option_a?, option_b?}`
-  - `grok-4.3` via `xai_sdk`, structured output with Pydantic, options ≤ 100 chars, 30 s timeout. Timeout → `GenerationTimeout`. Any other SDK error or invalid output → `GenerationFailed`. Verify the model id and timeout option against the SDK when building.
-- [ ] `repositories/stories.py`: `insert`, `list_all`, `get` (with `root_node_id`).
-- [ ] `repositories/nodes.py`: `insert`, `get`, `children`, `path_to_root`.
-- [ ] `services/stories.py`: `create_story` (random `max_level` 5–10, call LLM, then insert story + root in one transaction), `list_stories`, `get_story`.
+- [x] `conftest.py`: `fake_llm` fixture (a `FakeLLM` that records calls and raises `error` if set). The `client` fixture depends on it, so API tests never reach xAI.
+- [x] `schemas.py`: `StoryCreate` (idea trimmed, 1–300), `Story`. Still to add: `NodeOption`, `NodeView` (2d).
+- [x] `llm.py`: `start_story(idea, max_level) -> Opening{title, content, option_a, option_b}`; `grok-4.20-0309-non-reasoning` via `xai_sdk` (model id checked against the API), `chat.parse` structured output, options ≤ 100 chars, 30 s client timeout. `DEADLINE_EXCEEDED` → `GenerationTimeout`; other gRPC errors, invalid output or a missing key → `GenerationFailed`. Tests: `tests/test_llm.py`. Real calls took about 2.2 s (`grok-4.3`, the first choice, took 7–11 s).
+- [ ] `llm.py`: `continue_story(idea, path, choice_text, level, max_level, final) -> Passage{content, option_a?, option_b?}` (Step 3, its first user).
+- [x] `repositories/stories.py`: `insert`. Still to add: `list_all`, `get` (with `root_node_id`).
+- [x] `repositories/nodes.py`: `insert`. Still to add: `get`, `children`, `path_to_root`.
+- [x] `services/stories.py`: `create_story` (random `max_level` 5–10, call LLM, then insert story + root in one transaction). Still to add: `list_stories`, `get_story`.
 - [ ] `services/nodes.py`: `get_node_view` (node + options with `child_id` + custom child if any + `can_add_custom`).
-- [ ] `handlers/stories.py`, `handlers/nodes.py`.
+- [x] `handlers/stories.py` (POST). Still to add: GETs, `handlers/nodes.py`.
 
 Tests (`tests/test_stories.py`, `tests/test_nodes.py`):
-- [ ] create → 201, root node at level 1 with two options
-- [ ] blank, whitespace-only and 301-char idea → 422
-- [ ] LLM timeout → 504, LLM failure → 502, and no story row left either way
+- [x] create → 201, root node at level 1 with two options; idea trimmed; 300 chars accepted
+- [x] blank, whitespace-only, 301-char, non-string and missing idea → 422, LLM not called
+- [x] LLM timeout → 504, LLM failure → 502, and no story or node row left either way
 - [ ] list empty → `[]`; list order newest first
 - [ ] unknown story → 404; unknown node → 404
 - [ ] node view: `child_id` null before exploring, no custom option yet, `can_add_custom` true

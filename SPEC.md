@@ -109,5 +109,5 @@ R7. Nothing is saved if generation fails. The LLM is called before the write, an
 - API is JSON REST under `/api`: nouns as resources, standard status codes (see table above).
   Special actions are `POST /api/<resource>/{id}/<action>`.
 - No pagination 
-- use the grok api for story generation. grok-4.3 using xai_sdk in python because its the cheapest from grok. Structured output (Pydantic) for title/content/options. Client timeout 30 s.
+- use the grok api for story generation, using xai_sdk in python. Model: grok-4.20-0309-non-reasoning (about 2 s per passage). It replaces grok-4.3, the cheapest option, which took 7–11 s and would show the "still working" message on most generations. Structured output (Pydantic) for title/content/options. Client timeout 30 s.
 - Tests fake the LLM, never the database.
