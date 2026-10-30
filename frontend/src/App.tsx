@@ -13,10 +13,26 @@ export default function App() {
       .catch(() => setStatus('backend unreachable'))
   }, [])
 
+  const healthy = status === 'ok' || status === 'loading'
+
   return (
-    <main className="p-6 font-sans">
-      <h1 className="text-2xl font-bold">Fullstack Starter</h1>
-      <p>Backend status: <strong>{status}</strong></p>
-    </main>
+    <div className="relative flex min-h-screen flex-col">
+      <main className="relative z-10 mx-auto w-full max-w-3xl flex-1 px-4 py-10 sm:py-16">
+        <header className="mb-10 text-center">
+          <h1 className="font-spooky text-5xl tracking-wide text-pumpkin sm:text-6xl">Story Interactive</h1>
+          <p className="mt-3 text-lg text-mist">Choose your own adventure… if you dare.</p>
+        </header>
+
+        {!healthy && (
+          <p role="alert" className="mb-6 rounded-xl border border-blood bg-crypt p-4 text-blood">
+            The spirits can't be reached ({status}). Start the backend with <code>./dev.sh</code>, then reload.
+          </p>
+        )}
+      </main>
+
+      <footer className="relative z-10 pb-6 text-center text-sm text-mist">
+        Backend: <span className={healthy ? 'text-slime' : 'text-blood'}>{status}</span>
+      </footer>
+    </div>
   )
 }
