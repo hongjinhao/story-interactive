@@ -3,6 +3,8 @@
 ## Project
 Reusable full-stack starter, the base for new projects. TODO: replace with the real project's summary (what it is, who uses it).
 
+`SPEC.md` holds the agreed data model, API, rules and edge cases. Read it before planning, build to it, and ask before changing it.
+
 ## Architecture
 FastAPI backend (`backend/`, port 8000) and React/Vite TypeScript frontend (`frontend/`, port 5173). The Vite dev server proxies `/api/*` to the backend. All database access goes through `backend/app/db.py`, which talks to whichever database `DATABASE_URL` in `.env` picks.
 ```
