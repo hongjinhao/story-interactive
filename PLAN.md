@@ -133,7 +133,7 @@ Progress:
 - [x] 4d `SpookyLoader.tsx` (+ `Ghost.tsx`, the shared inline-SVG ghost also used by 4h): full-screen overlay that blocks double clicks, floating ghost (`motion-reduce` stops it), message in Lora italic, "still working" after 10 s, `role="status"` + `aria-live`
 - [x] 4e `NewStoryForm.tsx`: intro, idea textarea (`maxLength` 300, live counter, Enter submits / Shift+Enter new line), "Summon a tale" disabled while blank or saving, inline `role="alert"` error, loader while generating, then `onOpen(root_node_id)`. `App.tsx` gains `nodeId` state with a temporary placeholder for the story view. Checked through the Vite proxy: 422 on 301 chars, 201 in 2.3 s on a real idea.
 - [x] 4f `StoryList.tsx`: "Tales already told", cards in a 1/2-column grid (title, 2-line idea, date · levels), whole card is one button that opens the root node; loading line, empty state, inline error. Remounts (so refetches) whenever the player returns home.
-- [ ] 4g `StoryView.tsx`
+- [x] 4g `StoryView.tsx`: title, "Level n of max" + progress dots, passage (Lora 18px, line-height 1.7, max-w-prose), options A/B/✦ with 👣 explored; explored options navigate straight to `child_id` (no request), unexplored ones POST `/choose` behind the loader; custom input (`maxLength` 100, counter) or, when a custom branch exists, a note naming it; 409 reloads the node; ↑ Go back (hidden at the root), ← Home; ending shows The End + Start over (root via `GET /api/stories/{id}`) + Home; focus moves to the level heading after each move. Checked through the proxy: generate 201 (2.1 s), walk 200 (14 ms), custom 201, different custom 409, parent lists all three.
 - [ ] 4h `HauntedDecor.tsx`
 
 ### Halloween look: spooky but readable
