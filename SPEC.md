@@ -28,7 +28,7 @@ The UI is Halloween themed (ghosts, cobwebs, spiders) but stays easy to read and
 | POST   | /api/stories | `{idea}` | 201 story + `root_node_id` | 422, 502, 504 |
 | GET    | /api/stories | | 200 `[story]`, newest first (ties: id desc), `[]` when empty | |
 | GET    | /api/stories/{id} | | 200 story + `root_node_id` | 404 |
-| DELETE | /api/stories/{id} | | 204 (its nodes are deleted too) | 404 |
+| DELETE | /api/stories/{id} (stretch) | | 204 (its nodes are deleted too) | 404 |
 | GET    | /api/nodes/{id} | | 200 node view | 404 |
 | POST   | /api/nodes/{id}/choose | `{slot: "a"\|"b"}` or `{slot: "custom", text}` | 200 existing child (walk) · 201 new child (generated) | 400, 404, 409, 422, 502, 504 |
 
@@ -50,7 +50,7 @@ Node view (what the story screen renders):
 ## Page
 <!-- Per component: what it shows (sorted?), what it reads (GETs, dropdowns),
      what it writes, where errors show. After a write: what refetches? Missing a GET? Add it to the API. -->
-- start (`NewStoryForm` + `StoryList`): shows hello and introduces this app, idea box with a 0/300 counter, shows previous stories newest first (empty state when none), each with open and delete (confirm first). Reads GET /api/stories, writes POST /api/stories, DELETE /api/stories/{id}. After create → opens the root node. After delete → removes the card. Errors show inline under the form/card.
+- start (`NewStoryForm` + `StoryList`): shows hello and introduces this app, idea box with a 0/300 counter, shows previous stories newest first (empty state when none), each opens on click. Reads GET /api/stories, writes POST /api/stories. After create → opens the root node. Stretch: a delete button per card (confirm first) → DELETE /api/stories/{id}, then removes the card. Errors show inline under the form/card.
 - storybox (`StoryView`): shows story title, "Level n of max", the current passage, the 2 options plus the custom one if it exists (explored ones marked), a custom action box with a 0/100 counter (disabled with a reason when the node already has a custom branch), "go back" to the parent node. An ending shows "The End", start over (root) and home. Reads GET /api/nodes/{id}, writes POST /api/nodes/{id}/choose. After a choose → shows the returned child. After a 409 → refetches the node so the existing custom option appears. Errors show inline under the options.
 - loading (`SpookyLoader`): overlay while a story/node is generating. After 10 s it adds "still working" text.
 - back to home, brings user back to the home page which shows start. 
@@ -95,11 +95,11 @@ R7. Nothing is saved if generation fails. The LLM is called before the write, an
 - Choose at an ending → 400
 - Choose a/b twice → second call returns the same child (200), LLM called once
 - Two requests generate the same slot at once → one insert wins, the other returns the winner's node (200), or 409 if it's a custom branch with different text
-- Delete a story → 204, its nodes then 404. Delete unknown story → 404
+- (stretch) Delete a story → 204, its nodes then 404. Delete unknown story → 404
 
 ## Scope
-**MVP:** users can generate story ideas, see previous stories, run through the story with the pre generated action options, walk back up, delete stories
-**Stretch:** users can generate their own custom action prompts (planned with the core rules, since the schema handles it). Breadcrumb path, choosing story length, story map view, typewriter reveal, deleting a custom leaf branch.
+**MVP:** users can generate story ideas, see previous stories, run through the story with the pre generated action options, walk back up
+**Stretch:** users can generate their own custom action prompts (built with the core rules, since the schema handles it). Delete stories (moved from MVP; the schema already cascades). Breadcrumb path, choosing story length, story map view, typewriter reveal, deleting a custom leaf branch.
 **Out of scope:** Auth, deployment, CICD
 
 

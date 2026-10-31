@@ -167,12 +167,14 @@ Usability floor:
 
 Checked with headless Chromium against `./dev.sh` (screenshots at 1280, 390 and 320 px): created a story, played a 5-level story to The End through the UI (1.5–2.0 s per choice), ↑ Go back showed the explored option, Home listed both stories; custom branch, 409 and walk-vs-generate checked through the proxy in 4g. Focus lands on the level heading; no horizontal scroll. Note: 👣 renders as a box only where no emoji font exists (it is `aria-hidden`; the word "explored" carries the meaning).
 
-## Step 5: Delete
+## Step 5: Delete (deferred, now stretch)
+Skipped for now (decided after Step 4) and moved from MVP to stretch in `SPEC.md`; listed under gaps and future work in `README.md`.
+
 - [ ] `DELETE /api/stories/{id}` → 204, or 404. Cascade removes its nodes.
   - Tests: delete → 204, then story GET → 404 and its node GET → 404. Delete unknown → 404.
 - [ ] `StoryList.tsx`: 🗑 button on each card → `confirm("Banish this tale forever?")` → remove the card after 204, inline error otherwise.
 
-## Step 6: Extras (in priority order, each needs a SPEC.md update first)
+## Step 6: Extras (deferred; in priority order, each needs a SPEC.md update first)
 1. [ ] **Breadcrumb:** node view also returns `path` (the choices taken from the root). Clicking a crumb jumps up to that level.
 2. [ ] **Pick the length:** optional `max_level` (5–10) on `POST /api/stories`, 422 outside the range.
 3. [ ] **Story map:** `GET /api/stories/{id}/tree` with a simple nested view of explored branches.
