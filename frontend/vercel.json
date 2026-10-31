@@ -1,5 +1,5 @@
 {
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://YOUR-LAPTOP.YOUR-TAILNET.ts.net/api/:path*" }
+    { "source": "/api/:path*", "destination": "https://crypt.tailfd4dcd.ts.net/api/:path*" }
   ]
 }
