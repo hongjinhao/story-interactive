@@ -1,0 +1,23 @@
+# systemd unit for the FastAPI backend on the Ubuntu laptop server. See deploy/README.md.
+# Install (replaces YOURUSER with your login):
+#   sed "s/YOURUSER/$USER/g" deploy/story-backend.service | sudo tee /etc/systemd/system/story-backend.service
+#   sudo systemctl daemon-reload && sudo systemctl enable --now story-backend
+
+[Unit]
+Description=Story Interactive API (FastAPI on 127.0.0.1:8000)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+User=YOURUSER
+WorkingDirectory=/home/YOURUSER/story-interactive/backend
+# Same .env as dev.sh: DATABASE_URL and XAI_API_KEY
+EnvironmentFile=/home/YOURUSER/story-interactive/.env
+# 127.0.0.1 only: Tailscale Funnel is the one way in. No --reload in production.
+ExecStart=/home/YOURUSER/.local/bin/uv run --frozen --no-dev uvicorn app.main:app --host 127.0.0.1 --port 8000
+# Restart after crashes, and keep retrying if Postgres is still starting at boot
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

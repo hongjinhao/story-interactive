@@ -6,6 +6,8 @@
 services:
   db:
     image: postgres:17
+    # Start again after a crash or reboot (the laptop server relies on this), unless stopped by hand
+    restart: unless-stopped
     environment:
       POSTGRES_USER: app
       POSTGRES_PASSWORD: app

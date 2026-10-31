@@ -8,3 +8,7 @@ dist/
 *.db-journal
 *.db-wal
 *.db-shm
+
+# Local deep-research output, not part of the app
+research_notes/
+reports/
