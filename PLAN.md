@@ -134,7 +134,7 @@ Progress:
 - [x] 4e `NewStoryForm.tsx`: intro, idea textarea (`maxLength` 300, live counter, Enter submits / Shift+Enter new line), "Summon a tale" disabled while blank or saving, inline `role="alert"` error, loader while generating, then `onOpen(root_node_id)`. `App.tsx` gains `nodeId` state with a temporary placeholder for the story view. Checked through the Vite proxy: 422 on 301 chars, 201 in 2.3 s on a real idea.
 - [x] 4f `StoryList.tsx`: "Tales already told", cards in a 1/2-column grid (title, 2-line idea, date · levels), whole card is one button that opens the root node; loading line, empty state, inline error. Remounts (so refetches) whenever the player returns home.
 - [x] 4g `StoryView.tsx`: title, "Level n of max" + progress dots, passage (Lora 18px, line-height 1.7, max-w-prose), options A/B/✦ with 👣 explored; explored options navigate straight to `child_id` (no request), unexplored ones POST `/choose` behind the loader; custom input (`maxLength` 100, counter) or, when a custom branch exists, a note naming it; 409 reloads the node; ↑ Go back (hidden at the root), ← Home; ending shows The End + Start over (root via `GET /api/stories/{id}`) + Home; focus moves to the level heading after each move. Checked through the proxy: generate 201 (2.1 s), walk 200 (14 ms), custom 201, different custom 409, parent lists all three.
-- [ ] 4h `HauntedDecor.tsx`
+- [x] 4h `HauntedDecor.tsx` (+ `Cobweb.tsx`, computed SVG path): corner webs, 3 dangling spiders (lg+, in the margins), 4 margin ghosts (lg+) and 2 small header-corner ghosts below lg; layer is `absolute` under the z-10 content (not `fixed`: a fixed ghost drifted behind "Tales already told" on a 390px phone), `pointer-events-none`, `aria-hidden`, `motion-reduce:animate-none`. Story card: ghost peeking over its top edge, faint web in its corner (`isolate` + `-z-10`, under the text).
 
 ### Halloween look: spooky but readable
 Palette (`@theme` tokens):
@@ -164,6 +164,8 @@ Usability floor:
 - Passage in a high-contrast card about 65 characters wide. Nothing decorative behind the text.
 
 **Done when:** `./test.sh` passes, and a manual run of `./dev.sh` covers: create a story → play to the end → walk back up → add a custom branch → see it as an option → back to home → the story is in the list.
+
+Checked with headless Chromium against `./dev.sh` (screenshots at 1280, 390 and 320 px): created a story, played a 5-level story to The End through the UI (1.5–2.0 s per choice), ↑ Go back showed the explored option, Home listed both stories; custom branch, 409 and walk-vs-generate checked through the proxy in 4g. Focus lands on the level heading; no horizontal scroll. Note: 👣 renders as a box only where no emoji font exists (it is `aria-hidden`; the word "explored" carries the meaning).
 
 ## Step 5: Delete
 - [ ] `DELETE /api/stories/{id}` → 204, or 404. Cascade removes its nodes.

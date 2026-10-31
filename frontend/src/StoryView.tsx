@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { api, ApiError, post, type NodeOption, type Story, type StoryNode } from './api.ts'
+import Cobweb from './Cobweb.tsx'
+import Ghost from './Ghost.tsx'
 import SpookyLoader from './SpookyLoader.tsx'
 
 const MAX_CUSTOM = 100 // matches ChooseRequest in backend/app/schemas.py
@@ -110,100 +112,106 @@ export default function StoryView({ nodeId, onNavigate, onHome }: Props) {
         ← Home
       </button>
 
-      <section className="rounded-2xl border border-crypt-edge bg-crypt p-5 sm:p-8">
-        <p className="font-spooky text-2xl tracking-wide text-pumpkin sm:text-3xl">{node.story_title}</p>
-        <h2 ref={headingRef} tabIndex={-1} className="mt-1 flex items-center gap-3 text-mist focus:outline-none">
-          Level {node.level} of {node.max_level}
-          <span aria-hidden="true" className="flex gap-1">
-            {Array.from({ length: node.max_level }, (_, i) => (
-              <span key={i} className={`h-2 w-2 rounded-full ${i < node.level ? 'bg-pumpkin' : 'bg-crypt-edge'}`} />
-            ))}
-          </span>
-        </h2>
-
-        <p className="mt-5 max-w-prose font-story text-lg leading-[1.7] whitespace-pre-line">{node.content}</p>
-
-        {node.is_ending ? (
-          <div className="mt-8 text-center">
-            <p className="font-spooky text-5xl tracking-wide text-pumpkin">The End</p>
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
-              <button type="button" onClick={startOver} className={primaryButton}>
-                Start over
-              </button>
-              <button type="button" onClick={onHome} className={secondaryButton}>
-                Home
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="mt-8">
-            <h3 className="font-semibold">What do you do?</h3>
-            <ul className="mt-3 grid gap-3">
-              {node.options.map((option) => (
-                <li key={option.slot}>
-                  <button
-                    type="button"
-                    onClick={() => pick(option)}
-                    disabled={choosing}
-                    className={`flex min-h-11 w-full items-center gap-3 rounded-xl border-2 border-tomb bg-night px-4 py-3 text-left transition hover:border-pumpkin disabled:cursor-not-allowed ${focusRing}`}
-                  >
-                    <span aria-hidden="true" className="font-spooky text-xl text-pumpkin">
-                      {option.slot === 'custom' ? '✦' : option.slot.toUpperCase()}
-                    </span>
-                    <span className="flex-1">{option.text}</span>
-                    {option.slot === 'custom' && <span className="text-sm text-mist italic">a player's path</span>}
-                    {option.child_id !== null && (
-                      <span className="text-sm whitespace-nowrap text-slime">
-                        <span aria-hidden="true">👣 </span>explored
-                      </span>
-                    )}
-                  </button>
-                </li>
+      <div className="relative">
+        {/* Peeks over the card's top edge; the card (painted after it) hides its body. */}
+        <Ghost className="absolute -top-9 right-8 w-10 animate-float opacity-80 motion-reduce:animate-none" />
+        <section className="relative isolate rounded-2xl border border-crypt-edge bg-crypt p-5 sm:p-8">
+          {/* -z-10 inside an isolated card: above the card's background, below its text and buttons */}
+          <Cobweb className="absolute right-0 bottom-0 -z-10 w-16 rotate-180 opacity-15" />
+          <p className="font-spooky text-2xl tracking-wide text-pumpkin sm:text-3xl">{node.story_title}</p>
+          <h2 ref={headingRef} tabIndex={-1} className="mt-1 flex items-center gap-3 text-mist focus:outline-none">
+            Level {node.level} of {node.max_level}
+            <span aria-hidden="true" className="flex gap-1">
+              {Array.from({ length: node.max_level }, (_, i) => (
+                <span key={i} className={`h-2 w-2 rounded-full ${i < node.level ? 'bg-pumpkin' : 'bg-crypt-edge'}`} />
               ))}
-            </ul>
+            </span>
+          </h2>
 
-            {node.can_add_custom ? (
-              <form onSubmit={submitCustom} className="mt-6">
-                <label htmlFor="custom-action" className="block font-semibold">
-                  Or write your own action
-                </label>
-                <div className="mt-2 flex flex-col gap-3 sm:flex-row">
-                  <input
-                    id="custom-action"
-                    value={custom}
-                    onChange={(e) => setCustom(e.target.value)}
-                    maxLength={MAX_CUSTOM}
-                    placeholder="Whistle back at the raven…"
-                    aria-describedby="custom-count"
-                    disabled={choosing}
-                    className="min-h-11 flex-1 rounded-xl border-2 border-tomb bg-night px-4 py-2 text-base placeholder:text-mist placeholder:italic focus:border-pumpkin focus:ring-4 focus:ring-pumpkin/30 focus:outline-none"
-                  />
-                  <button type="submit" disabled={custom.trim() === '' || choosing} className={primaryButton}>
-                    Do it
-                  </button>
-                </div>
-                <p id="custom-count" className="mt-2 text-sm text-mist">
-                  {custom.length}/{MAX_CUSTOM}
-                </p>
-              </form>
-            ) : (
-              <div className="mt-6">
-                <p className="font-semibold">Or write your own action</p>
-                <p className="mt-2 text-mist">
-                  Someone has already written their own path here
-                  {customOption ? <>: “{customOption.text}”, listed above</> : null}. Each turn allows one.
-                </p>
+          <p className="mt-5 max-w-prose font-story text-lg leading-[1.7] whitespace-pre-line">{node.content}</p>
+
+          {node.is_ending ? (
+            <div className="mt-8 text-center">
+              <p className="font-spooky text-5xl tracking-wide text-pumpkin">The End</p>
+              <div className="mt-6 flex flex-wrap justify-center gap-3">
+                <button type="button" onClick={startOver} className={primaryButton}>
+                  Start over
+                </button>
+                <button type="button" onClick={onHome} className={secondaryButton}>
+                  Home
+                </button>
               </div>
-            )}
-          </div>
-        )}
+            </div>
+          ) : (
+            <div className="mt-8">
+              <h3 className="font-semibold">What do you do?</h3>
+              <ul className="mt-3 grid gap-3">
+                {node.options.map((option) => (
+                  <li key={option.slot}>
+                    <button
+                      type="button"
+                      onClick={() => pick(option)}
+                      disabled={choosing}
+                      className={`flex min-h-11 w-full items-center gap-3 rounded-xl border-2 border-tomb bg-night px-4 py-3 text-left transition hover:border-pumpkin disabled:cursor-not-allowed ${focusRing}`}
+                    >
+                      <span aria-hidden="true" className="font-spooky text-xl text-pumpkin">
+                        {option.slot === 'custom' ? '✦' : option.slot.toUpperCase()}
+                      </span>
+                      <span className="flex-1">{option.text}</span>
+                      {option.slot === 'custom' && <span className="text-sm text-mist italic">a player's path</span>}
+                      {option.child_id !== null && (
+                        <span className="text-sm whitespace-nowrap text-slime">
+                          <span aria-hidden="true">👣 </span>explored
+                        </span>
+                      )}
+                    </button>
+                  </li>
+                ))}
+              </ul>
 
-        {chooseError && (
-          <p role="alert" className="mt-4 text-blood">
-            {chooseError}
-          </p>
-        )}
-      </section>
+              {node.can_add_custom ? (
+                <form onSubmit={submitCustom} className="mt-6">
+                  <label htmlFor="custom-action" className="block font-semibold">
+                    Or write your own action
+                  </label>
+                  <div className="mt-2 flex flex-col gap-3 sm:flex-row">
+                    <input
+                      id="custom-action"
+                      value={custom}
+                      onChange={(e) => setCustom(e.target.value)}
+                      maxLength={MAX_CUSTOM}
+                      placeholder="Whistle back at the raven…"
+                      aria-describedby="custom-count"
+                      disabled={choosing}
+                      className="min-h-11 flex-1 rounded-xl border-2 border-tomb bg-night px-4 py-2 text-base placeholder:text-mist placeholder:italic focus:border-pumpkin focus:ring-4 focus:ring-pumpkin/30 focus:outline-none"
+                    />
+                    <button type="submit" disabled={custom.trim() === '' || choosing} className={primaryButton}>
+                      Do it
+                    </button>
+                  </div>
+                  <p id="custom-count" className="mt-2 text-sm text-mist">
+                    {custom.length}/{MAX_CUSTOM}
+                  </p>
+                </form>
+              ) : (
+                <div className="mt-6">
+                  <p className="font-semibold">Or write your own action</p>
+                  <p className="mt-2 text-mist">
+                    Someone has already written their own path here
+                    {customOption ? <>: “{customOption.text}”, listed above</> : null}. Each turn allows one.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {chooseError && (
+            <p role="alert" className="mt-4 text-blood">
+              {chooseError}
+            </p>
+          )}
+        </section>
+      </div>
 
       {parentId !== null && (
         <button type="button" onClick={() => go(parentId)} className={`mt-6 ${secondaryButton}`}>

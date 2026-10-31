@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import HauntedDecor from './HauntedDecor.tsx'
 import NewStoryForm from './NewStoryForm.tsx'
 import StoryList from './StoryList.tsx'
 import StoryView from './StoryView.tsx'
@@ -21,6 +22,7 @@ export default function App() {
 
   return (
     <div className="relative flex min-h-screen flex-col">
+      <HauntedDecor />
       <main className="relative z-10 mx-auto w-full max-w-3xl flex-1 px-4 py-10 sm:py-16">
         <header className="mb-10 text-center">
           <h1 className="font-spooky text-5xl tracking-wide text-pumpkin sm:text-6xl">Story Interactive</h1>
