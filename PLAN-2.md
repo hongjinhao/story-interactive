@@ -78,9 +78,9 @@ Tests (`test_choose.py`):
 | `pumpkin` / `slime` / `blood` | `accent` / `success` / `danger` |
 | `font-spooky` | `font-display` |
 
-- [ ] `index.css`: rename the variables, same values, update the contrast comment.
-- [ ] All components: update classes, including compound ones (`crypt-edge` before `crypt`, `shadow-pumpkin/30`, `ring-pumpkin/30`, `outline-pumpkin`, `bg-night/85`, `bg-bone/30`, `fill-night`, `stroke-mist`).
-- [ ] `grep -rnE '\b(night|crypt|tomb|bone|mist|pumpkin|slime|blood|spooky)\b' frontend/src` finds no class names.
+- [x] `index.css`: rename the variables, same values, update the contrast comment.
+- [x] All components: update classes, including compound ones (`crypt-edge` before `crypt`, `shadow-pumpkin/30`, `ring-pumpkin/30`, `outline-pumpkin`, `bg-night/85`, `bg-bone/30`, `fill-night`, `stroke-mist`).
+- [x] `grep -rnE '\b(night|crypt|tomb|bone|mist|pumpkin|slime|blood|spooky)\b' frontend/src` finds no class names.
 
 **Done when:** `./test.sh` passes; screenshots at 1280 and 390 px match the previous ones.
 

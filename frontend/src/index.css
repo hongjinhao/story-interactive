@@ -1,19 +1,20 @@
 @import "tailwindcss";
 
-/* Halloween theme. Text pairs are checked against WCAG: bone on night 16.7:1, mist on crypt 8.6:1,
-   night text on pumpkin 8.1:1, blood on crypt 6.5:1. Input borders (tomb) are 3.5:1 on crypt. */
+/* Theme tokens. Names say what a colour does, so they fit every theme (SPECS-2.md); each theme's
+   values and measured contrast are in theme-specs/<id>.md. These defaults are Halloween: ink on bg
+   16.7:1, muted on surface 8.6:1, bg text on accent 8.4:1, danger on surface 6.5:1, field borders 3.5:1. */
 @theme {
-  --color-night: #0d0a14; /* page background */
-  --color-crypt: #1a1325; /* cards, panels */
-  --color-crypt-edge: #2e2340; /* decorative card borders */
-  --color-tomb: #75649a; /* input borders, 3:1+ so fields are easy to find */
-  --color-bone: #f2ecdf; /* main text */
-  --color-mist: #b8aecb; /* secondary text */
-  --color-pumpkin: #ff8c1a; /* primary buttons (night text on top), focus ring */
-  --color-slime: #8fe36b; /* explored marker */
-  --color-blood: #ff6b6b; /* errors */
+  --color-bg: #0d0a14; /* page background */
+  --color-surface: #1a1325; /* cards, panels */
+  --color-edge: #2e2340; /* decorative card borders */
+  --color-field: #75649a; /* input borders, 3:1+ so fields are easy to find */
+  --color-ink: #f2ecdf; /* main text */
+  --color-muted: #b8aecb; /* secondary text */
+  --color-accent: #ff8c1a; /* primary buttons (bg-colour text on top), focus ring, headings */
+  --color-success: #8fe36b; /* explored marker */
+  --color-danger: #ff6b6b; /* errors */
 
-  --font-spooky: "Creepster", "Lora", Georgia, serif; /* headings only */
+  --font-display: "Creepster", "Lora", Georgia, serif; /* headings only */
   --font-story: "Lora", Georgia, serif; /* story passages */
 
   --animate-float: float 7s ease-in-out infinite;
@@ -46,8 +47,8 @@
   }
 
   body {
-    background-color: var(--color-night);
-    color: var(--color-bone);
+    background-color: var(--color-bg);
+    color: var(--color-ink);
     font-size: 1rem;
     line-height: 1.6;
   }

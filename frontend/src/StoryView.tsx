@@ -6,9 +6,9 @@ import SpookyLoader from './SpookyLoader.tsx'
 
 const MAX_CUSTOM = 100 // matches ChooseRequest in backend/app/schemas.py
 
-const focusRing = 'focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-pumpkin'
-const secondaryButton = `min-h-11 rounded-xl border-2 border-tomb px-5 font-semibold transition hover:border-pumpkin ${focusRing}`
-const primaryButton = `min-h-11 rounded-xl bg-pumpkin px-6 font-semibold text-night transition hover:shadow-[0_0_18px] hover:shadow-pumpkin/50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:shadow-none ${focusRing}`
+const focusRing = 'focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent'
+const secondaryButton = `min-h-11 rounded-xl border-2 border-field px-5 font-semibold transition hover:border-accent ${focusRing}`
+const primaryButton = `min-h-11 rounded-xl bg-accent px-6 font-semibold text-bg transition hover:shadow-[0_0_18px] hover:shadow-accent/50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:shadow-none ${focusRing}`
 
 type Props = {
   nodeId: number
@@ -91,8 +91,8 @@ export default function StoryView({ nodeId, onNavigate, onHome }: Props) {
 
   if (loadError) {
     return (
-      <section className="rounded-2xl border border-crypt-edge bg-crypt p-5 sm:p-8">
-        <p role="alert" className="text-blood">
+      <section className="rounded-2xl border border-edge bg-surface p-5 sm:p-8">
+        <p role="alert" className="text-danger">
           Couldn't open this part of the tale: {loadError}
         </p>
         <button type="button" onClick={onHome} className={`mt-4 ${secondaryButton}`}>
@@ -101,7 +101,7 @@ export default function StoryView({ nodeId, onNavigate, onHome }: Props) {
       </section>
     )
   }
-  if (!node) return <p className="text-center text-mist">Opening the tale…</p>
+  if (!node) return <p className="text-center text-muted">Opening the tale…</p>
 
   const customOption = node.options.find((o) => o.slot === 'custom')
   const parentId = node.parent_id
@@ -115,15 +115,15 @@ export default function StoryView({ nodeId, onNavigate, onHome }: Props) {
       <div className="relative">
         {/* Peeks over the card's top edge; the card (painted after it) hides its body. */}
         <Ghost className="absolute -top-9 right-8 w-10 animate-float opacity-80 motion-reduce:animate-none" />
-        <section className="relative isolate rounded-2xl border border-crypt-edge bg-crypt p-5 sm:p-8">
+        <section className="relative isolate rounded-2xl border border-edge bg-surface p-5 sm:p-8">
           {/* -z-10 inside an isolated card: above the card's background, below its text and buttons */}
           <Cobweb className="absolute right-0 bottom-0 -z-10 w-16 rotate-180 opacity-15" />
-          <p className="font-spooky text-2xl tracking-wide text-pumpkin sm:text-3xl">{node.story_title}</p>
-          <h2 ref={headingRef} tabIndex={-1} className="mt-1 flex items-center gap-3 text-mist focus:outline-none">
+          <p className="font-display text-2xl tracking-wide text-accent sm:text-3xl">{node.story_title}</p>
+          <h2 ref={headingRef} tabIndex={-1} className="mt-1 flex items-center gap-3 text-muted focus:outline-none">
             Level {node.level} of {node.max_level}
             <span aria-hidden="true" className="flex gap-1">
               {Array.from({ length: node.max_level }, (_, i) => (
-                <span key={i} className={`h-2 w-2 rounded-full ${i < node.level ? 'bg-pumpkin' : 'bg-crypt-edge'}`} />
+                <span key={i} className={`h-2 w-2 rounded-full ${i < node.level ? 'bg-accent' : 'bg-edge'}`} />
               ))}
             </span>
           </h2>
@@ -132,7 +132,7 @@ export default function StoryView({ nodeId, onNavigate, onHome }: Props) {
 
           {node.is_ending ? (
             <div className="mt-8 text-center">
-              <p className="font-spooky text-5xl tracking-wide text-pumpkin">The End</p>
+              <p className="font-display text-5xl tracking-wide text-accent">The End</p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
                 <button type="button" onClick={startOver} className={primaryButton}>
                   Start over
@@ -152,15 +152,15 @@ export default function StoryView({ nodeId, onNavigate, onHome }: Props) {
                       type="button"
                       onClick={() => pick(option)}
                       disabled={choosing}
-                      className={`flex min-h-11 w-full items-center gap-3 rounded-xl border-2 border-tomb bg-night px-4 py-3 text-left transition hover:border-pumpkin disabled:cursor-not-allowed ${focusRing}`}
+                      className={`flex min-h-11 w-full items-center gap-3 rounded-xl border-2 border-field bg-bg px-4 py-3 text-left transition hover:border-accent disabled:cursor-not-allowed ${focusRing}`}
                     >
-                      <span aria-hidden="true" className="font-spooky text-xl text-pumpkin">
+                      <span aria-hidden="true" className="font-display text-xl text-accent">
                         {option.slot === 'custom' ? '✦' : option.slot.toUpperCase()}
                       </span>
                       <span className="flex-1">{option.text}</span>
-                      {option.slot === 'custom' && <span className="text-sm text-mist italic">a player's path</span>}
+                      {option.slot === 'custom' && <span className="text-sm text-muted italic">a player's path</span>}
                       {option.child_id !== null && (
-                        <span className="text-sm whitespace-nowrap text-slime">
+                        <span className="text-sm whitespace-nowrap text-success">
                           <span aria-hidden="true">👣 </span>explored
                         </span>
                       )}
@@ -183,20 +183,20 @@ export default function StoryView({ nodeId, onNavigate, onHome }: Props) {
                       placeholder="Whistle back at the raven…"
                       aria-describedby="custom-count"
                       disabled={choosing}
-                      className="min-h-11 flex-1 rounded-xl border-2 border-tomb bg-night px-4 py-2 text-base placeholder:text-mist placeholder:italic focus:border-pumpkin focus:ring-4 focus:ring-pumpkin/30 focus:outline-none"
+                      className="min-h-11 flex-1 rounded-xl border-2 border-field bg-bg px-4 py-2 text-base placeholder:text-muted placeholder:italic focus:border-accent focus:ring-4 focus:ring-accent/30 focus:outline-none"
                     />
                     <button type="submit" disabled={custom.trim() === '' || choosing} className={primaryButton}>
                       Do it
                     </button>
                   </div>
-                  <p id="custom-count" className="mt-2 text-sm text-mist">
+                  <p id="custom-count" className="mt-2 text-sm text-muted">
                     {custom.length}/{MAX_CUSTOM}
                   </p>
                 </form>
               ) : (
                 <div className="mt-6">
                   <p className="font-semibold">Or write your own action</p>
-                  <p className="mt-2 text-mist">
+                  <p className="mt-2 text-muted">
                     Someone has already written their own path here
                     {customOption ? <>: “{customOption.text}”, listed above</> : null}. Each turn allows one.
                   </p>
@@ -206,7 +206,7 @@ export default function StoryView({ nodeId, onNavigate, onHome }: Props) {
           )}
 
           {chooseError && (
-            <p role="alert" className="mt-4 text-blood">
+            <p role="alert" className="mt-4 text-danger">
               {chooseError}
             </p>
           )}

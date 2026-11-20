@@ -25,12 +25,12 @@ export default function App() {
       <HauntedDecor />
       <main className="relative z-10 mx-auto w-full max-w-3xl flex-1 px-4 py-10 sm:py-16">
         <header className="mb-10 text-center">
-          <h1 className="font-spooky text-5xl tracking-wide text-pumpkin sm:text-6xl">Story Interactive</h1>
-          <p className="mt-3 text-lg text-mist">Choose your own adventure… if you dare.</p>
+          <h1 className="font-display text-5xl tracking-wide text-accent sm:text-6xl">Story Interactive</h1>
+          <p className="mt-3 text-lg text-muted">Choose your own adventure… if you dare.</p>
         </header>
 
         {!healthy && (
-          <p role="alert" className="mb-6 rounded-xl border border-blood bg-crypt p-4 text-blood">
+          <p role="alert" className="mb-6 rounded-xl border border-danger bg-surface p-4 text-danger">
             The spirits can't be reached ({status}). Start the backend with <code>./dev.sh</code>, then reload.
           </p>
         )}
@@ -45,8 +45,8 @@ export default function App() {
         )}
       </main>
 
-      <footer className="relative z-10 pb-6 text-center text-sm text-mist">
-        Backend: <span className={healthy ? 'text-slime' : 'text-blood'}>{status}</span>
+      <footer className="relative z-10 pb-6 text-center text-sm text-muted">
+        Backend: <span className={healthy ? 'text-success' : 'text-danger'}>{status}</span>
       </footer>
     </div>
   )

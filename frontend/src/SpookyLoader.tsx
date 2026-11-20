@@ -17,11 +17,11 @@ export default function SpookyLoader({ message }: Props) {
   }, [])
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-night/85 px-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-bg/85 px-4 backdrop-blur-sm">
       <div role="status" aria-live="polite" className="flex flex-col items-center text-center">
         <Ghost className="h-24 w-20 animate-float opacity-90 motion-reduce:animate-none" />
         <p className="mt-6 font-story text-xl italic">{message}</p>
-        {slow && <p className="mt-2 text-mist">The spirits are slow tonight… still working.</p>}
+        {slow && <p className="mt-2 text-muted">The spirits are slow tonight… still working.</p>}
       </div>
     </div>
   )

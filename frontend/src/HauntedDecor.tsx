@@ -7,16 +7,16 @@ const still = 'motion-reduce:animate-none' // players who turn off animations ge
 function Spider({ className, thread }: { className: string; thread: string }) {
   return (
     <div className={`absolute top-0 hidden origin-top animate-dangle flex-col items-center lg:flex ${still} ${className}`}>
-      <div className={`w-px bg-bone/30 ${thread}`} />
+      <div className={`w-px bg-ink/30 ${thread}`} />
       <svg viewBox="0 0 40 32" className="-mt-1 w-8">
-        <g fill="none" strokeWidth={1.5} strokeLinecap="round" className="stroke-mist">
+        <g fill="none" strokeWidth={1.5} strokeLinecap="round" className="stroke-muted">
           <path d="M18 14Q10 4 3 8M17 17Q8 12 1 16M17 20Q8 20 2 26M18 23Q12 28 6 31" />
           <path d="M22 14Q30 4 37 8M23 17Q32 12 39 16M23 20Q32 20 38 26M22 23Q28 28 34 31" />
         </g>
-        <ellipse cx="20" cy="19" rx="7" ry="8" className="fill-mist" />
-        <circle cx="20" cy="10" r="4" className="fill-mist" />
-        <circle cx="18.5" cy="9.5" r="1" className="fill-pumpkin" />
-        <circle cx="21.5" cy="9.5" r="1" className="fill-pumpkin" />
+        <ellipse cx="20" cy="19" rx="7" ry="8" className="fill-muted" />
+        <circle cx="20" cy="10" r="4" className="fill-muted" />
+        <circle cx="18.5" cy="9.5" r="1" className="fill-accent" />
+        <circle cx="21.5" cy="9.5" r="1" className="fill-accent" />
       </svg>
     </div>
   )

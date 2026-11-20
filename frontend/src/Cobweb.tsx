@@ -23,7 +23,7 @@ type Props = { className?: string }
 export default function Cobweb({ className = '' }: Props) {
   return (
     <svg viewBox={`0 0 ${SPAN} ${SPAN}`} aria-hidden="true" className={`pointer-events-none ${className}`}>
-      <path d={WEB} fill="none" strokeWidth={1} strokeLinecap="round" className="stroke-bone" />
+      <path d={WEB} fill="none" strokeWidth={1} strokeLinecap="round" className="stroke-ink" />
     </svg>
   )
 }

@@ -20,18 +20,18 @@ export default function StoryList({ onOpen }: Props) {
 
   return (
     <section aria-labelledby="tales-heading" className="mt-12">
-      <h2 id="tales-heading" className="font-spooky text-3xl tracking-wide text-pumpkin">
+      <h2 id="tales-heading" className="font-display text-3xl tracking-wide text-accent">
         Tales already told
       </h2>
 
       {error && (
-        <p role="alert" className="mt-4 text-blood">
+        <p role="alert" className="mt-4 text-danger">
           Couldn't load past tales: {error}
         </p>
       )}
-      {!error && stories === null && <p className="mt-4 text-mist">Gathering the tales…</p>}
+      {!error && stories === null && <p className="mt-4 text-muted">Gathering the tales…</p>}
       {stories?.length === 0 && (
-        <p className="mt-4 text-mist italic">No tales haunt this place yet… summon the first one above.</p>
+        <p className="mt-4 text-muted italic">No tales haunt this place yet… summon the first one above.</p>
       )}
 
       {stories && stories.length > 0 && (
@@ -41,13 +41,13 @@ export default function StoryList({ onOpen }: Props) {
               <button
                 type="button"
                 onClick={() => onOpen(story.root_node_id)}
-                className="group h-full w-full rounded-2xl border border-crypt-edge bg-crypt p-5 text-left transition hover:border-pumpkin hover:shadow-[0_0_18px] hover:shadow-pumpkin/30 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-pumpkin"
+                className="group h-full w-full rounded-2xl border border-edge bg-surface p-5 text-left transition hover:border-accent hover:shadow-[0_0_18px] hover:shadow-accent/30 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
-                <span className="block font-story text-lg font-semibold group-hover:text-pumpkin">
+                <span className="block font-story text-lg font-semibold group-hover:text-accent">
                   {story.title}
                 </span>
-                <span className="mt-1 line-clamp-2 block text-mist">{story.idea}</span>
-                <span className="mt-3 block text-sm text-mist">
+                <span className="mt-1 line-clamp-2 block text-muted">{story.idea}</span>
+                <span className="mt-3 block text-sm text-muted">
                   {formatDate(story.created_at)} · {story.max_level} levels
                 </span>
               </button>

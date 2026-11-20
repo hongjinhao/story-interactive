@@ -36,9 +36,9 @@ export default function NewStoryForm({ onOpen }: Props) {
   }
 
   return (
-    <section className="rounded-2xl border border-crypt-edge bg-crypt p-5 sm:p-8">
-      <h2 className="font-spooky text-3xl tracking-wide text-pumpkin">Begin a new tale</h2>
-      <p className="mt-2 text-mist">
+    <section className="rounded-2xl border border-edge bg-surface p-5 sm:p-8">
+      <h2 className="font-display text-3xl tracking-wide text-accent">Begin a new tale</h2>
+      <p className="mt-2 text-muted">
         Describe an idea and the spirits will write the story, one choice at a time. Each tale lasts 5 to 10
         turns: pick one of two paths, or type your own.
       </p>
@@ -56,22 +56,22 @@ export default function NewStoryForm({ onOpen }: Props) {
           rows={3}
           placeholder="A lighthouse keeper hears knocking from beneath the waves…"
           aria-describedby={error ? 'idea-count idea-error' : 'idea-count'}
-          className="mt-2 w-full resize-y rounded-xl border-2 border-tomb bg-night px-4 py-3 text-base placeholder:text-mist placeholder:italic focus:border-pumpkin focus:ring-4 focus:ring-pumpkin/30 focus:outline-none"
+          className="mt-2 w-full resize-y rounded-xl border-2 border-field bg-bg px-4 py-3 text-base placeholder:text-muted placeholder:italic focus:border-accent focus:ring-4 focus:ring-accent/30 focus:outline-none"
         />
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-          <span id="idea-count" className="text-sm text-mist">
+          <span id="idea-count" className="text-sm text-muted">
             {idea.length}/{MAX_IDEA}
           </span>
           <button
             type="submit"
             disabled={blank || saving}
-            className="min-h-11 rounded-xl bg-pumpkin px-6 font-semibold text-night transition hover:shadow-[0_0_18px] hover:shadow-pumpkin/50 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-pumpkin disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:shadow-none"
+            className="min-h-11 rounded-xl bg-accent px-6 font-semibold text-bg transition hover:shadow-[0_0_18px] hover:shadow-accent/50 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:shadow-none"
           >
             Summon a tale
           </button>
         </div>
         {error && (
-          <p id="idea-error" role="alert" className="mt-3 text-blood">
+          <p id="idea-error" role="alert" className="mt-3 text-danger">
             {error}
           </p>
         )}
