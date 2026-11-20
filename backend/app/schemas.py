@@ -7,6 +7,8 @@ from pydantic import BaseModel, StringConstraints, model_validator
 
 Idea = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=300)]
 CustomText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
+# Must match THEMES in frontend/src/themes.ts, and every id needs a line in llm.MOODS (theme-specs/).
+ThemeId = Literal["halloween", "christmas"]
 
 
 class StoryCreate(BaseModel):

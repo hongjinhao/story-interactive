@@ -113,3 +113,16 @@ def test_deleting_story_deletes_its_nodes(conn):
     add_node(conn, story, root, "a", "Go left", level=2)
     conn.execute("DELETE FROM stories WHERE id = %s", (story,))
     assert conn.execute("SELECT COUNT(*) AS n FROM nodes").fetchone()["n"] == 0
+
+
+def test_new_story_defaults_to_halloween_theme(conn):
+    story_id = add_story(conn)
+    row = conn.execute("SELECT theme FROM stories WHERE id = %s", (story_id,)).fetchone()
+    assert row["theme"] == "halloween"
+
+
+def test_schema_runs_again_on_an_existing_database(conn):
+    story_id = add_story(conn)
+    db.init_db()  # what every backend start does; the ALTER must be a no-op the second time
+    row = conn.execute("SELECT theme FROM stories WHERE id = %s", (story_id,)).fetchone()
+    assert row["theme"] == "halloween"

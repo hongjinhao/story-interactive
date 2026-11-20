@@ -18,22 +18,22 @@ backend: stories.theme ─→ services ─→ llm.start_story/continue_story(…
 ---
 
 ## Step 1: Schema and narrator mood (no API change yet)
-- [ ] `schema/postgres.sql` (after the `CREATE TABLE`s):
+- [x] `schema/postgres.sql` (after the `CREATE TABLE`s):
   ```sql
   ALTER TABLE stories ADD COLUMN IF NOT EXISTS theme TEXT NOT NULL DEFAULT 'halloween';
   CREATE INDEX IF NOT EXISTS stories_by_theme ON stories (theme, created_at DESC, id DESC);
   ```
   Existing dev and deployed stories become Halloween on the next backend start. No reset needed.
-- [ ] `schemas.py`: `ThemeId = Literal["halloween", "christmas"]`.
-- [ ] `llm.py`: remove the "Lean eerie…" line from `SYSTEM_PROMPT`. Add `MOODS: dict[str, str]` (one line per
+- [x] `schemas.py`: `ThemeId = Literal["halloween", "christmas"]`.
+- [x] `llm.py`: remove the "Lean eerie…" line from `SYSTEM_PROMPT`. Add `MOODS: dict[str, str]` (one line per
   theme, from its sheet in `theme-specs/`). `_ask(shape, prompt, theme)` sends `system(SYSTEM_PROMPT + "\n" + MOODS[theme])`.
   `start_story(idea, max_level, theme)`, `continue_story(…, final, theme)`.
-- [ ] `conftest.py`: `FakeLLM.start_story` / `continue_story` take `theme` and record it in `calls`.
-- [ ] Services pass `theme="halloween"` for now (it gets wired in Steps 2 and 4).
+- [x] `conftest.py`: `FakeLLM.start_story` / `continue_story` take `theme` and record it in `calls`.
+- [x] Services pass `theme="halloween"` for now (it gets wired in Steps 2 and 4).
 
 Tests:
-- [ ] `test_schema.py`: new story row gets `theme = 'halloween'` by default; running the schema twice is fine.
-- [ ] `test_llm.py`: every value of `ThemeId` has a `MOODS` entry; the system message for christmas contains the christmas line and not the halloween one.
+- [x] `test_schema.py`: new story row gets `theme = 'halloween'` by default; running the schema twice is fine.
+- [x] `test_llm.py`: every value of `ThemeId` has a `MOODS` entry; the system message for christmas contains the christmas line and not the halloween one.
 
 **Done when:** `./test.sh` passes; `./dev.sh` on the existing dev DB starts and old stories still open.
 

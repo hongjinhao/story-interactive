@@ -44,7 +44,7 @@ def choose(conn, node_id: int, slot: str, text: str | None) -> tuple[dict, bool]
     # Generate before writing: never hold a transaction open while waiting on the LLM (R7).
     passage = llm.continue_story(
         node["idea"], nodes.path_to_root(conn, node_id), choice_text, level, node["max_level"],
-        final=is_ending,
+        final=is_ending, theme="halloween",  # PLAN-2 Step 4 passes the story's theme
     )
     try:
         created = nodes.insert(

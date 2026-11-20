@@ -10,7 +10,7 @@ def create_story(conn, idea: str) -> dict:
     """R1: the LLM writes the title, opening passage and two options; save story + root together."""
     max_level = random.randint(MIN_LEVELS, MAX_LEVELS)
     # Generate before the transaction: never hold one open while waiting on the LLM.
-    opening = llm.start_story(idea, max_level)
+    opening = llm.start_story(idea, max_level, theme="halloween")  # PLAN-2 Step 2 passes the real one
     with db.transaction(conn):
         story = stories.insert(conn, opening.title, idea, max_level)
         root = nodes.insert(

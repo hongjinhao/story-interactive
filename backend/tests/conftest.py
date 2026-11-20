@@ -39,11 +39,13 @@ class FakeLLM:
 
     def __init__(self):
         self.calls: list[tuple] = []
+        self.themes: list[str] = []  # the theme of each call, in order (kept apart so `calls` stays as it was)
         self.error: Exception | None = None
         self.on_call: Callable[[], None] | None = None
 
-    def start_story(self, idea: str, max_level: int) -> llm.Opening:
+    def start_story(self, idea: str, max_level: int, *, theme: str) -> llm.Opening:
         self.calls.append(("start_story", idea, max_level))
+        self.themes.append(theme)
         if self.error:
             raise self.error
         return llm.Opening(
@@ -54,8 +56,9 @@ class FakeLLM:
         )
 
     def continue_story(self, idea: str, path: list[dict], choice_text: str, level: int,
-                       max_level: int, final: bool) -> llm.Passage | llm.Ending:
+                       max_level: int, final: bool, *, theme: str) -> llm.Passage | llm.Ending:
         self.calls.append(("continue_story", idea, path, choice_text, level, max_level, final))
+        self.themes.append(theme)
         if self.on_call:
             self.on_call()
         if self.error:

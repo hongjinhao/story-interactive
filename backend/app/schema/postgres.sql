@@ -33,3 +33,9 @@ CREATE TABLE IF NOT EXISTS nodes (
 
 -- UNIQUE treats NULLs as distinct, so one root per story needs a partial index.
 CREATE UNIQUE INDEX IF NOT EXISTS one_root_per_story ON nodes (story_id) WHERE parent_id IS NULL;
+
+-- Each story belongs to the theme it was created in (SPECS-2.md). Added with ALTER so existing
+-- databases pick it up on the next start; their stories become Halloween ones. No CHECK on the
+-- value: the allowed list is schemas.ThemeId, so a new theme needs no migration.
+ALTER TABLE stories ADD COLUMN IF NOT EXISTS theme TEXT NOT NULL DEFAULT 'halloween';
+CREATE INDEX IF NOT EXISTS stories_by_theme ON stories (theme, created_at DESC, id DESC);

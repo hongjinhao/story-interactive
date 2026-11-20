@@ -2,11 +2,12 @@
 
 import json
 from types import SimpleNamespace
+from typing import get_args
 
 import grpc
 import pytest
 
-from app import errors, llm
+from app import errors, llm, schemas
 
 GOOD_OPENING = {
     "title": "The Lantern Road",
@@ -44,20 +45,20 @@ def use_client(monkeypatch, answer) -> list[dict]:
 
 def test_start_story_returns_parsed_opening(monkeypatch):
     use_client(monkeypatch, json.dumps(GOOD_OPENING))
-    opening = llm.start_story("a lantern in the fog", 6)
+    opening = llm.start_story("a lantern in the fog", 6, theme="halloween")
     assert opening == llm.Opening(**GOOD_OPENING)
 
 
 def test_deadline_exceeded_raises_generation_timeout(monkeypatch):
     use_client(monkeypatch, FakeRpcError(grpc.StatusCode.DEADLINE_EXCEEDED))
     with pytest.raises(errors.GenerationTimeout):
-        llm.start_story("idea", 5)
+        llm.start_story("idea", 5, theme="halloween")
 
 
 def test_other_api_error_raises_generation_failed(monkeypatch):
     use_client(monkeypatch, FakeRpcError(grpc.StatusCode.UNAVAILABLE))
     with pytest.raises(errors.GenerationFailed):
-        llm.start_story("idea", 5)
+        llm.start_story("idea", 5, theme="halloween")
 
 
 @pytest.mark.parametrize(
@@ -73,7 +74,7 @@ def test_other_api_error_raises_generation_failed(monkeypatch):
 def test_answer_that_does_not_fit_raises_generation_failed(monkeypatch, answer):
     use_client(monkeypatch, answer)
     with pytest.raises(errors.GenerationFailed):
-        llm.start_story("idea", 5)
+        llm.start_story("idea", 5, theme="halloween")
 
 
 def test_missing_api_key_raises_generation_failed(monkeypatch):
@@ -81,7 +82,7 @@ def test_missing_api_key_raises_generation_failed(monkeypatch):
     llm._client.cache_clear()
     try:
         with pytest.raises(errors.GenerationFailed, match="XAI_API_KEY"):
-            llm.start_story("idea", 5)
+            llm.start_story("idea", 5, theme="halloween")
     finally:
         llm._client.cache_clear()
 
@@ -95,7 +96,7 @@ GOOD_PASSAGE = {"content": "You reach a gate.", "option_a": "Open it", "option_b
 
 def test_continue_story_returns_passage_with_story_so_far(monkeypatch):
     sent = use_client(monkeypatch, json.dumps(GOOD_PASSAGE))
-    passage = llm.continue_story("a lantern in the fog", PATH, "Run after it", 3, 6, final=False)
+    passage = llm.continue_story("a lantern in the fog", PATH, "Run after it", 3, 6, final=False, theme="halloween")
     assert passage == llm.Passage(**GOOD_PASSAGE)
     prompt = str(sent[0]["messages"][1])
     for part in ("a lantern in the fog", "Passage 1: Fog rolls over the road.",
@@ -106,7 +107,7 @@ def test_continue_story_returns_passage_with_story_so_far(monkeypatch):
 
 def test_final_passage_is_an_ending_without_options(monkeypatch):
     sent = use_client(monkeypatch, json.dumps({"content": "The fog lifts. The end."}))
-    ending = llm.continue_story("idea", PATH, "Run after it", 6, 6, final=True)
+    ending = llm.continue_story("idea", PATH, "Run after it", 6, 6, final=True, theme="halloween")
     assert ending == llm.Ending(content="The fog lifts. The end.")
     assert "final passage" in str(sent[0]["messages"][1])
 
@@ -114,4 +115,28 @@ def test_final_passage_is_an_ending_without_options(monkeypatch):
 def test_non_final_answer_without_options_raises_generation_failed(monkeypatch):
     use_client(monkeypatch, json.dumps({"content": "The fog lifts."}))
     with pytest.raises(errors.GenerationFailed):
-        llm.continue_story("idea", PATH, "Run after it", 3, 6, final=False)
+        llm.continue_story("idea", PATH, "Run after it", 3, 6, final=False, theme="halloween")
+
+
+# Narrator mood per theme (SPECS-2.md, theme-specs/)
+
+
+def test_every_theme_has_a_mood_line():
+    assert set(get_args(schemas.ThemeId)) == set(llm.MOODS)
+
+
+@pytest.mark.parametrize("theme, other", [("halloween", "christmas"), ("christmas", "halloween")])
+def test_system_prompt_carries_only_the_story_themes_mood(monkeypatch, theme, other):
+    sent = use_client(monkeypatch, json.dumps(GOOD_OPENING))
+    llm.start_story("idea", 5, theme=theme)
+    sent_passage = use_client(monkeypatch, json.dumps(GOOD_PASSAGE))
+    llm.continue_story("idea", PATH, "Run after it", 3, 6, final=False, theme=theme)
+    for request in (sent[0], sent_passage[0]):
+        system_prompt = str(request["messages"][0])
+        assert llm.MOODS[theme] in system_prompt
+        assert llm.MOODS[other] not in system_prompt
+        assert "choose-your-own-adventure" in system_prompt  # the shared prompt is still there
+
+
+def test_shared_prompt_no_longer_leans_eerie():
+    assert "eerie" not in llm.SYSTEM_PROMPT
