@@ -1,0 +1,115 @@
+# Theme: Halloween
+
+The original look, written up as it is today. PLAN-2 moves it onto the theme system without changing
+how it looks (only the token names change, e.g. `pumpkin` → `accent`).
+
+## Identity
+| Field | Value |
+|---|---|
+| id | `halloween` |
+| Label | Halloween ("Halloween stories") |
+| Festival | Oct 31 |
+| Default window | Jan 2 – Nov 7 (with Christmas as the only other festival) |
+| Status | live (moves onto the theme system in PLAN-2) |
+| One-line feel | A haunted night: ghosts, cobwebs and spiders, pumpkin light, spooky but readable |
+
+Also the backend's default theme for `POST /api/stories` without `theme`, and the bank all stories made
+before PLAN-2 belong to.
+
+## Palette
+| Token (old name) | Hex | Use | Notes |
+|---|---|---|---|
+| `bg` (`night`) | `#0d0a14` | page background | |
+| `surface` (`crypt`) | `#1a1325` | cards, panels | |
+| `edge` (`crypt-edge`) | `#2e2340` | decorative card borders | decorative |
+| `field` (`tomb`) | `#75649a` | input and secondary button borders | |
+| `ink` (`bone`) | `#f2ecdf` | main text | |
+| `muted` (`mist`) | `#b8aecb` | secondary text, unselected picker icons | |
+| `accent` (`pumpkin`) | `#ff8c1a` | primary buttons, focus ring, headings | |
+| `success` (`slime`) | `#8fe36b` | explored marker | |
+| `danger` (`blood`) | `#ff6b6b` | errors | |
+| extras | none | | |
+
+Contrast:
+| Pair | Minimum | Ratio |
+|---|---|---|
+| `ink` on `bg` | 7:1 | 16.7:1 |
+| `ink` on `surface` | 7:1 | 15.3:1 |
+| `muted` on `surface` | 4.5:1 | 8.6:1 |
+| `accent` on `surface` | 4.5:1 | 7.7:1 |
+| `success` on `surface` | 4.5:1 | 11.5:1 |
+| `danger` on `surface` | 4.5:1 | 6.5:1 |
+| `bg` text on `accent` | 4.5:1 | 8.4:1 |
+| `field` on `surface` | 3:1 | 3.5:1 |
+| `field` on `bg` | 3:1 | 3.8:1 |
+| `muted` @ 70% on `bg` | 3:1 | 5.0:1 |
+
+## Type
+| Role | Font |
+|---|---|
+| Display (headings only) | Creepster, fallback `"Lora", Georgia, serif` |
+| Passages | Lora 18px |
+| Body, buttons, inputs | system sans |
+
+## Icons
+| Component | What it shows | Colours |
+|---|---|---|
+| `PickerIcon` (`Pumpkin.tsx`, new) | Flat pumpkin: slightly squashed round body, two shallow rib notches, short stem. No face. | `currentColor` |
+| `Icon` (`Ghost.tsx`) | Sheet ghost with a round head, wavy hem, two eyes and a mouth | `ink` body, `bg` face |
+| `CardCorner` (`Cobweb.tsx`) | Corner cobweb, rotated into the card's bottom-right corner | `ink` strokes, 15% |
+
+## Decorations (`HauntedDecor.tsx`)
+| Element | Where | Size / count | Opacity | Motion |
+|---|---|---|---|---|
+| Cobwebs | top-left and top-right page corners (right one mirrored) | 2, 96px (160px from sm) | 25% | none |
+| Spiders on threads | top of the page, side margins (lg+) | 3, threads 64–176px | full (`muted` body, `accent` eyes) | `dangle`, 5 s, staggered |
+| Ghosts | side margins (lg+) | 4, 32–56px | 50–60% | `float`, 7 s, staggered |
+| Ghosts | header corners (below lg) | 2, 20–24px | 50% | `float` |
+| Ghost peeking over the story card | card top edge | 1, 40px | 80% | `float` |
+
+Keyframes: `float` (bob up 12px and back), `dangle` (sway ±4° from the top).
+
+## Wording
+| Key | Where it shows | Text |
+|---|---|---|
+| `tagline` | under the title | Choose your own adventure… if you dare. |
+| `intro` | under "Begin a new tale" | Describe an idea and the spirits will write the story, one choice at a time. Each tale lasts 5 to 10 turns: pick one of two paths, or type your own. |
+| `ideaPlaceholder` | idea box | A lighthouse keeper hears knocking from beneath the waves… |
+| `createButton` | create button | Summon a tale |
+| `creating` | loader while creating | Summoning your tale… |
+| `choosing` | loader while choosing | The tale unfolds… |
+| `slow` | loader after 10 s | The spirits are slow tonight… still working. |
+| `customPlaceholder` | custom action box | Whistle back at the raven… |
+| `listHeading` | home list heading | Tales already told |
+| `listLoading` | while the list loads | Gathering the tales… |
+| `emptyList` | bank has no stories | No tales haunt this place yet… summon the first one above. |
+| `unreachable` | backend-down banner | The spirits can't be reached |
+
+The `intro` is the one line over 90 characters (TH22). It's kept as is, because the second sentence is
+how the app explains the rules.
+
+## Narrator mood
+`MOODS["halloween"]`:
+> Lean eerie and atmospheric: shadows, mystery, a delicious chill, never graphic.
+
+This replaces today's shared line "Lean eerie and atmospheric where it suits the player's idea." so the
+tone should stay the same.
+
+Trial stories (to do in PLAN-2 Step 9):
+| Idea | Kind | Mood shows? | Format unchanged? |
+|---|---|---|---|
+| A trip to the mountains | neutral | | |
+| A haunted lighthouse | matching | | |
+| A sunny beach picnic | opposite | | |
+
+## Content check
+- Trademarks avoided: no Jack Skellington, Hocus Pocus, Ghostbusters or other film imagery. Generic ghosts, spiders, cobwebs and pumpkins only.
+- Cultural notes: secular, folklore Halloween only.
+
+## Build checklist (PLAN-2)
+- [ ] Token rename (Step 5), no visible change
+- [ ] Moved to `frontend/src/themes/halloween/` + `THEMES` entry with the wording above (Step 6)
+- [ ] `Pumpkin.tsx` picker icon (Step 7)
+- [ ] Mood line in `llm.MOODS` (Step 1)
+- [ ] Trial stories done and noted above
+- [ ] Browser checks (Step 9)
