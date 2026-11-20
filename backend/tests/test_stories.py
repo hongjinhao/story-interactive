@@ -145,6 +145,45 @@ def test_list_stories_same_time_ties_broken_by_id(client):
     assert [s["id"] for s in client.get("/api/stories").json()] == sorted(ids, reverse=True)
 
 
+def make_banks(client) -> dict[str, list[int]]:
+    """Two Halloween stories and one Christmas story, created oldest first."""
+    ids: dict[str, list[int]] = {"halloween": [], "christmas": []}
+    for idea, theme in [("a crypt", "halloween"), ("a reindeer", "christmas"), ("a raven", "halloween")]:
+        ids[theme].append(client.post("/api/stories", json={"idea": idea, "theme": theme}).json()["id"])
+    return ids
+
+
+def test_list_filtered_by_theme_returns_only_that_bank_newest_first(client):
+    ids = make_banks(client)
+    halloween = client.get("/api/stories", params={"theme": "halloween"})
+    assert halloween.status_code == 200
+    assert [s["id"] for s in halloween.json()] == list(reversed(ids["halloween"]))
+    assert all(s["theme"] == "halloween" for s in halloween.json())
+    christmas = client.get("/api/stories", params={"theme": "christmas"}).json()
+    assert [s["id"] for s in christmas] == ids["christmas"]
+    assert christmas[0]["root_node_id"]
+
+
+def test_list_empty_bank_returns_empty_list(client):
+    client.post("/api/stories", json={"idea": "a crypt", "theme": "halloween"})
+    r = client.get("/api/stories", params={"theme": "christmas"})
+    assert r.status_code == 200
+    assert r.json() == []
+
+
+def test_list_without_theme_returns_every_bank(client):
+    ids = make_banks(client)
+    every = [s["id"] for s in client.get("/api/stories").json()]
+    assert sorted(every) == sorted(ids["halloween"] + ids["christmas"])
+
+
+@pytest.mark.parametrize("theme", ["easter", "", "Christmas"], ids=["unknown", "empty", "wrong-case"])
+def test_list_unknown_theme_returns_422(client, theme):
+    r = client.get("/api/stories", params={"theme": theme})
+    assert r.status_code == 422
+    assert "theme" in r.json()["detail"][0]["loc"]
+
+
 # GET /api/stories/{id}
 
 

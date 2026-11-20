@@ -12,8 +12,8 @@ def create_story(body: schemas.StoryCreate, conn: db.DB):
 
 
 @router.get("/api/stories", response_model=list[schemas.Story])
-def list_stories(conn: db.DB):
-    return stories.list_stories(conn)
+def list_stories(conn: db.DB, theme: schemas.ThemeId | None = None):
+    return stories.list_stories(conn, theme)
 
 
 @router.get("/api/stories/{story_id}", response_model=schemas.Story)

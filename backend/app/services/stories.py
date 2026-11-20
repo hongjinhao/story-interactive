@@ -25,8 +25,9 @@ def create_story(conn, idea: str, theme: str) -> dict:
     return {**story, "root_node_id": root["id"]}
 
 
-def list_stories(conn) -> list[dict]:
-    return stories.list_all(conn)
+def list_stories(conn, theme: str | None = None) -> list[dict]:
+    """R10: one theme's story bank, or every story when no theme is given (older clients)."""
+    return stories.list_all(conn, theme)
 
 
 def get_story(conn, story_id: int) -> dict:

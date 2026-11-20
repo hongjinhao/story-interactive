@@ -11,9 +11,18 @@ _SELECT_WITH_ROOT = """SELECT s.*, n.id AS root_node_id
                        JOIN nodes n ON n.story_id = s.id AND n.parent_id IS NULL"""
 
 
-def list_all(conn) -> list[dict]:
-    """Every story with its root node id, newest first (ties: highest id first)."""
-    rows = conn.execute(f"{_SELECT_WITH_ROOT} ORDER BY s.created_at DESC, s.id DESC").fetchall()
+_NEWEST_FIRST = "ORDER BY s.created_at DESC, s.id DESC"
+
+
+def list_all(conn, theme: str | None = None) -> list[dict]:
+    """Stories with their root node id, newest first (ties: highest id first).
+    With `theme`, only that theme's stories (its story bank); without, every story."""
+    if theme is None:
+        rows = conn.execute(f"{_SELECT_WITH_ROOT} {_NEWEST_FIRST}").fetchall()
+    else:
+        rows = conn.execute(
+            f"{_SELECT_WITH_ROOT} WHERE s.theme = %s {_NEWEST_FIRST}", (theme,)
+        ).fetchall()
     return [dict(row) for row in rows]
 
 

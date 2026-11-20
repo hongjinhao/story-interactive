@@ -49,15 +49,15 @@ Tests (`test_stories.py`):
 - [x] `"easter"`, `""`, `null`, `5` → 422, LLM not called, no row
 
 ## Step 3: `GET /api/stories?theme=`
-- [ ] Handler: `theme: ThemeId | None = None` query param (FastAPI gives 422 for unknown values).
-- [ ] `services/stories.list_stories(conn, theme)`; `repositories/stories.list_all(conn, theme)` adds
+- [x] Handler: `theme: ThemeId | None = None` query param (FastAPI gives 422 for unknown values).
+- [x] `services/stories.list_stories(conn, theme)`; `repositories/stories.list_all(conn, theme)` adds
   `WHERE s.theme = %s` only when given. Two fixed SQL strings, no string building.
 
 Tests:
-- [ ] two halloween + one christmas → `?theme=christmas` returns the one; `?theme=halloween` the two, newest first
-- [ ] `?theme=christmas` with none → `[]`
-- [ ] no param → all three
-- [ ] `?theme=easter` → 422
+- [x] two halloween + one christmas → `?theme=christmas` returns the one; `?theme=halloween` the two, newest first
+- [x] `?theme=christmas` with none → `[]`
+- [x] no param → all three
+- [x] `?theme=easter` → 422
 
 ## Step 4: Choosing uses the story's theme
 - [ ] `repositories/nodes.get` also returns the story's `theme` (it already joins `stories` for title, idea, `max_level`).
