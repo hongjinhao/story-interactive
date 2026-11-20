@@ -42,6 +42,32 @@ def test_create_story_returns_201_with_root_node(client, fake_llm):
     assert fake_llm.calls == [("start_story", "A lighthouse keeper hears knocking", story["max_level"])]
 
 
+def test_create_story_keeps_its_theme_and_narrator_uses_it(client, fake_llm):
+    r = client.post("/api/stories", json={"idea": "A lost reindeer", "theme": "christmas"})
+    assert r.status_code == 201
+    story = r.json()
+    assert story["theme"] == "christmas"
+    assert fake_llm.themes == ["christmas"]
+    assert client.get(f"/api/stories/{story['id']}").json()["theme"] == "christmas"
+
+
+def test_create_story_without_theme_is_halloween(client, fake_llm):
+    r = client.post("/api/stories", json={"idea": "A lighthouse keeper hears knocking"})
+    assert r.status_code == 201
+    assert r.json()["theme"] == "halloween"
+    assert fake_llm.themes == ["halloween"]
+
+
+@pytest.mark.parametrize("theme", ["easter", "", None, 5, "Christmas"],
+                         ids=["unknown", "empty", "null", "not-a-string", "wrong-case"])
+def test_invalid_theme_returns_422_without_calling_llm(client, fake_llm, theme):
+    r = client.post("/api/stories", json={"idea": "A lost reindeer", "theme": theme})
+    assert r.status_code == 422
+    assert "theme" in r.json()["detail"][0]["loc"]
+    assert fake_llm.calls == []
+    assert count("stories") == 0
+
+
 def test_create_story_trims_idea(client):
     r = client.post("/api/stories", json={"idea": "   a cursed violin  "})
     assert r.status_code == 201

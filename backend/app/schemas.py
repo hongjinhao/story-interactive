@@ -13,12 +13,14 @@ ThemeId = Literal["halloween", "christmas"]
 
 class StoryCreate(BaseModel):
     idea: Idea
+    theme: ThemeId = "halloween"  # optional so the older deployed frontend keeps working (R8)
 
 
 class Story(BaseModel):
     id: int
     title: str
     idea: str
+    theme: ThemeId
     max_level: int
     root_node_id: int
     created_at: datetime

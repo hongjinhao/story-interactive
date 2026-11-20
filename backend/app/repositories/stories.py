@@ -1,7 +1,7 @@
-def insert(conn, title: str, idea: str, max_level: int) -> dict:
+def insert(conn, title: str, idea: str, theme: str, max_level: int) -> dict:
     row = conn.execute(
-        "INSERT INTO stories (title, idea, max_level) VALUES (%s, %s, %s) RETURNING *",
-        (title, idea, max_level),
+        "INSERT INTO stories (title, idea, theme, max_level) VALUES (%s, %s, %s, %s) RETURNING *",
+        (title, idea, theme, max_level),
     ).fetchone()
     return dict(row)
 

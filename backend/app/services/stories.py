@@ -6,13 +6,14 @@ from app.repositories import nodes, stories
 MIN_LEVELS, MAX_LEVELS = 5, 10
 
 
-def create_story(conn, idea: str) -> dict:
-    """R1: the LLM writes the title, opening passage and two options; save story + root together."""
+def create_story(conn, idea: str, theme: str) -> dict:
+    """R1: the LLM writes the title, opening passage and two options; save story + root together.
+    R8: the story keeps the theme it was created in, and the narrator writes in that theme's mood."""
     max_level = random.randint(MIN_LEVELS, MAX_LEVELS)
     # Generate before the transaction: never hold one open while waiting on the LLM.
-    opening = llm.start_story(idea, max_level, theme="halloween")  # PLAN-2 Step 2 passes the real one
+    opening = llm.start_story(idea, max_level, theme=theme)
     with db.transaction(conn):
-        story = stories.insert(conn, opening.title, idea, max_level)
+        story = stories.insert(conn, opening.title, idea, theme, max_level)
         root = nodes.insert(
             conn,
             story_id=story["id"],

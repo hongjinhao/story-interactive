@@ -38,15 +38,15 @@ Tests:
 **Done when:** `./test.sh` passes; `./dev.sh` on the existing dev DB starts and old stories still open.
 
 ## Step 2: `POST /api/stories` takes a theme
-- [ ] `schemas.StoryCreate`: `theme: ThemeId = "halloween"`. `schemas.Story`: `theme: ThemeId`.
-- [ ] `repositories/stories.insert` writes `theme`; `get` / `list_all` return it (`RETURNING *` already does).
-- [ ] `services/stories.create_story(conn, idea, theme)` → `llm.start_story(idea, max_level, theme)`.
-- [ ] Handler passes `body.theme`.
+- [x] `schemas.StoryCreate`: `theme: ThemeId = "halloween"`. `schemas.Story`: `theme: ThemeId`.
+- [x] `repositories/stories.insert` writes `theme`; `get` / `list_all` return it (`RETURNING *` already does).
+- [x] `services/stories.create_story(conn, idea, theme)` → `llm.start_story(idea, max_level, theme)`.
+- [x] Handler passes `body.theme`.
 
 Tests (`test_stories.py`):
-- [ ] `theme: "christmas"` → 201 with `theme` christmas, LLM called with christmas; get-by-id returns it
-- [ ] no `theme` → 201 halloween
-- [ ] `"easter"`, `""`, `null`, `5` → 422, LLM not called, no row
+- [x] `theme: "christmas"` → 201 with `theme` christmas, LLM called with christmas; get-by-id returns it
+- [x] no `theme` → 201 halloween
+- [x] `"easter"`, `""`, `null`, `5` → 422, LLM not called, no row
 
 ## Step 3: `GET /api/stories?theme=`
 - [ ] Handler: `theme: ThemeId | None = None` query param (FastAPI gives 422 for unknown values).
