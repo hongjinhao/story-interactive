@@ -68,6 +68,24 @@ def test_options_a_and_b_lead_to_different_children(client, story):
     assert b["content"] == "Level 2: you chose 'Run back to the road'."
 
 
+@pytest.mark.parametrize("theme", ["halloween", "christmas"])
+def test_choosing_uses_the_storys_own_theme(client, fake_llm, theme):
+    story = client.post("/api/stories", json={"idea": "a frozen lake", "theme": theme}).json()
+    child = choose(client, story["root_node_id"], "a").json()
+    choose(client, child["id"], "custom", "Skate to the island")
+    # every call for this story, the opening and both passages, used its theme (R9)
+    assert fake_llm.themes == [theme, theme, theme]
+    assert "theme" not in child  # the node view keeps its shape
+
+
+def test_walking_a_christmas_branch_makes_no_llm_call(client, fake_llm):
+    story = client.post("/api/stories", json={"idea": "a frozen lake", "theme": "christmas"}).json()
+    choose(client, story["root_node_id"], "b")
+    r = choose(client, story["root_node_id"], "b")
+    assert r.status_code == 200
+    assert fake_llm.themes == ["christmas", "christmas"]  # opening + one generation, no more
+
+
 def test_parent_view_shows_explored_child(client, story):
     root = story["root_node_id"]
     child = choose(client, root, "b").json()

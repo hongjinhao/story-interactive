@@ -60,13 +60,13 @@ Tests:
 - [x] `?theme=easter` → 422
 
 ## Step 4: Choosing uses the story's theme
-- [ ] `repositories/nodes.get` also returns the story's `theme` (it already joins `stories` for title, idea, `max_level`).
-- [ ] `services/nodes.choose` passes `node["theme"]` to `llm.continue_story`.
-- [ ] `NodeView` response unchanged (`theme` isn't added to it).
+- [x] `repositories/nodes.get` also returns the story's `theme` (it already joins `stories` for title, idea, `max_level`).
+- [x] `services/nodes.choose` passes `node["theme"]` to `llm.continue_story`.
+- [x] `NodeView` response unchanged (`theme` isn't added to it).
 
 Tests (`test_choose.py`):
-- [ ] choose in a christmas story → `continue_story` called with christmas; in a halloween story → halloween
-- [ ] walking an existing branch still makes no LLM call
+- [x] choose in a christmas story → `continue_story` called with christmas; in a halloween story → halloween
+- [x] walking an existing branch still makes no LLM call
 
 **Done when:** `./test.sh` passes; a manual `curl` creates a Christmas story through the proxy and its passages read warm and festive.
 

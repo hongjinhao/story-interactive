@@ -12,9 +12,9 @@ def insert(conn, *, story_id: int, level: int, content: str, option_a: str | Non
 
 
 def get(conn, node_id: int) -> dict | None:
-    """The node plus its story's title, idea and max_level."""
+    """The node plus its story's title, idea, theme and max_level."""
     row = conn.execute(
-        """SELECT n.*, s.title AS story_title, s.idea, s.max_level
+        """SELECT n.*, s.title AS story_title, s.idea, s.theme, s.max_level
            FROM nodes n
            JOIN stories s ON s.id = n.story_id
            WHERE n.id = %s""",

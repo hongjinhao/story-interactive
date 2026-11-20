@@ -95,7 +95,7 @@ New keyframes:
 Trial stories (to do in PLAN-2 Step 9):
 | Idea | Kind | Mood shows? | Format unchanged? |
 |---|---|---|---|
-| A trip to the mountains | neutral | | |
+| A trip to the mountains | neutral | yes: snow, pine, woodsmoke, holiday lights, carolers, cocoa (story 3, 2026-11-20) | yes: 2nd person, ~90–120 words, 2 short command options |
 | A lost reindeer on Christmas Eve | matching | | |
 | A haunted lighthouse | opposite | | |
 
