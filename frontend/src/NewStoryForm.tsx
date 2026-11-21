@@ -1,12 +1,13 @@
 import { useState, type FormEvent, type KeyboardEvent } from 'react'
 import { post, type Story } from './api.ts'
-import SpookyLoader from './SpookyLoader.tsx'
+import ThemedLoader from './ThemedLoader.tsx'
+import type { Theme } from './themes.ts'
 
 const MAX_IDEA = 300 // matches StoryCreate in backend/app/schemas.py
 
-type Props = { onOpen: (nodeId: number) => void }
+type Props = { theme: Theme; onOpen: (nodeId: number) => void }
 
-export default function NewStoryForm({ onOpen }: Props) {
+export default function NewStoryForm({ theme, onOpen }: Props) {
   const [idea, setIdea] = useState('')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -19,7 +20,7 @@ export default function NewStoryForm({ onOpen }: Props) {
     setSaving(true)
     setError(null)
     try {
-      const story = await post<Story>('/api/stories', { idea })
+      const story = await post<Story>('/api/stories', { idea, theme: theme.id }) // R8: the story joins this theme's bank
       onOpen(story.root_node_id) // this form unmounts, so no need to reset saving
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
@@ -38,10 +39,7 @@ export default function NewStoryForm({ onOpen }: Props) {
   return (
     <section className="rounded-2xl border border-edge bg-surface p-5 sm:p-8">
       <h2 className="font-display text-3xl tracking-wide text-accent">Begin a new tale</h2>
-      <p className="mt-2 text-muted">
-        Describe an idea and the spirits will write the story, one choice at a time. Each tale lasts 5 to 10
-        turns: pick one of two paths, or type your own.
-      </p>
+      <p className="mt-2 text-muted">{theme.copy.intro}</p>
 
       <form onSubmit={submit} className="mt-6">
         <label htmlFor="idea" className="block font-semibold">
@@ -54,7 +52,7 @@ export default function NewStoryForm({ onOpen }: Props) {
           onKeyDown={onKeyDown}
           maxLength={MAX_IDEA}
           rows={3}
-          placeholder="A lighthouse keeper hears knocking from beneath the waves…"
+          placeholder={theme.copy.ideaPlaceholder}
           aria-describedby={error ? 'idea-count idea-error' : 'idea-count'}
           className="mt-2 w-full resize-y rounded-xl border-2 border-field bg-bg px-4 py-3 text-base placeholder:text-muted placeholder:italic focus:border-accent focus:ring-4 focus:ring-accent/30 focus:outline-none"
         />
@@ -67,7 +65,7 @@ export default function NewStoryForm({ onOpen }: Props) {
             disabled={blank || saving}
             className="min-h-11 rounded-xl bg-accent px-6 font-semibold text-bg transition hover:shadow-[0_0_18px] hover:shadow-accent/50 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:shadow-none"
           >
-            Summon a tale
+            {theme.copy.createButton}
           </button>
         </div>
         {error && (
@@ -77,7 +75,7 @@ export default function NewStoryForm({ onOpen }: Props) {
         )}
       </form>
 
-      {saving && <SpookyLoader message="Summoning your tale…" />}
+      {saving && <ThemedLoader message={theme.copy.creating} slowMessage={theme.copy.slow} Icon={theme.Icon} />}
     </section>
   )
 }

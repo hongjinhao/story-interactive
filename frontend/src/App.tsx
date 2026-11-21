@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
-import HauntedDecor from './HauntedDecor.tsx'
 import NewStoryForm from './NewStoryForm.tsx'
 import StoryList from './StoryList.tsx'
 import StoryView from './StoryView.tsx'
+import { seasonalTheme } from './themes.ts'
 
 type Health = { status: string }
 
 export default function App() {
   const [status, setStatus] = useState('loading')
   const [nodeId, setNodeId] = useState<number | null>(null) // null = home
+  const [theme] = useState(() => seasonalTheme(new Date())) // PLAN-2 Step 7 adds the picker
 
   useEffect(() => {
     fetch('/api/health')
@@ -22,26 +23,26 @@ export default function App() {
 
   return (
     <div className="relative flex min-h-screen flex-col">
-      <HauntedDecor />
+      <theme.Decor />
       <main className="relative z-10 mx-auto w-full max-w-3xl flex-1 px-4 py-10 sm:py-16">
         <header className="mb-10 text-center">
           <h1 className="font-display text-5xl tracking-wide text-accent sm:text-6xl">Story Interactive</h1>
-          <p className="mt-3 text-lg text-muted">Choose your own adventure… if you dare.</p>
+          <p className="mt-3 text-lg text-muted">{theme.copy.tagline}</p>
         </header>
 
         {!healthy && (
           <p role="alert" className="mb-6 rounded-xl border border-danger bg-surface p-4 text-danger">
-            The spirits can't be reached ({status}). Start the backend with <code>./dev.sh</code>, then reload.
+            {theme.copy.unreachable} ({status}). Start the backend with <code>./dev.sh</code>, then reload.
           </p>
         )}
 
         {nodeId === null ? (
           <>
-            <NewStoryForm onOpen={setNodeId} />
-            <StoryList onOpen={setNodeId} />
+            <NewStoryForm theme={theme} onOpen={setNodeId} />
+            <StoryList key={theme.id} theme={theme} onOpen={setNodeId} />
           </>
         ) : (
-          <StoryView nodeId={nodeId} onNavigate={setNodeId} onHome={() => setNodeId(null)} />
+          <StoryView theme={theme} nodeId={nodeId} onNavigate={setNodeId} onHome={() => setNodeId(null)} />
         )}
       </main>
 

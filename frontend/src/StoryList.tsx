@@ -1,27 +1,33 @@
 import { useEffect, useState } from 'react'
 import { api, type Story } from './api.ts'
+import type { Theme } from './themes.ts'
 
-type Props = { onOpen: (nodeId: number) => void }
+type Props = { theme: Theme; onOpen: (nodeId: number) => void }
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-// Previous tales, newest first (the API's order).
-export default function StoryList({ onOpen }: Props) {
+// Previous tales in this theme's story bank, newest first (the API's order).
+export default function StoryList({ theme, onOpen }: Props) {
   const [stories, setStories] = useState<Story[] | null>(null) // null = still loading
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    api<Story[]>('/api/stories')
-      .then(setStories)
-      .catch((err: Error) => setError(err.message))
-  }, [])
+    // App remounts this list (key={theme.id}) when the theme changes, so it starts empty each time.
+    let ignore = false // unmounted before this answer arrived: don't show the other bank
+    api<Story[]>(`/api/stories?theme=${theme.id}`)
+      .then((list) => !ignore && setStories(list))
+      .catch((err: Error) => !ignore && setError(err.message))
+    return () => {
+      ignore = true
+    }
+  }, [theme.id])
 
   return (
     <section aria-labelledby="tales-heading" className="mt-12">
       <h2 id="tales-heading" className="font-display text-3xl tracking-wide text-accent">
-        Tales already told
+        {theme.copy.listHeading}
       </h2>
 
       {error && (
@@ -29,9 +35,9 @@ export default function StoryList({ onOpen }: Props) {
           Couldn't load past tales: {error}
         </p>
       )}
-      {!error && stories === null && <p className="mt-4 text-muted">Gathering the tales…</p>}
+      {!error && stories === null && <p className="mt-4 text-muted">{theme.copy.listLoading}</p>}
       {stories?.length === 0 && (
-        <p className="mt-4 text-muted italic">No tales haunt this place yet… summon the first one above.</p>
+        <p className="mt-4 text-muted italic">{theme.copy.emptyList}</p>
       )}
 
       {stories && stories.length > 0 && (

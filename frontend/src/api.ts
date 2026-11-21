@@ -1,9 +1,13 @@
 // The API client, the frontend's db.py. Components call api()/post() and never fetch directly.
 
+// Must match schemas.ThemeId in backend/app/schemas.py. A story keeps the theme it was created in.
+export type ThemeId = 'halloween' | 'christmas'
+
 export type Story = {
   id: number
   title: string
   idea: string
+  theme: ThemeId
   max_level: number
   root_node_id: number
   created_at: string

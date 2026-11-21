@@ -85,8 +85,8 @@ Tests (`test_choose.py`):
 **Done when:** `./test.sh` passes; screenshots at 1280 and 390 px match the previous ones.
 
 ## Step 6: Theme list, Halloween moved onto it (no visible change)
-- [ ] `api.ts`: `Story` type gains `theme`.
-- [ ] `frontend/src/themes.ts`:
+- [x] `api.ts`: `Story` type gains `theme`.
+- [x] `frontend/src/themes.ts`:
   ```ts
   export type ThemeId = 'halloween'          // must match backend schemas.ThemeId; 'christmas' in Step 8
   export type Theme = {
@@ -107,10 +107,10 @@ Tests (`test_choose.py`):
   `seasonalTheme` works on local calendar dates only (`new Date(y, m - 1, d + 7)` for each festival in
   `y - 1`, `y`, `y + 1`, keep those `>=` today's local midnight, take the soonest). It's a pure function: no
   `localStorage`, no `Date.now()` inside.
-- [ ] Move `HauntedDecor.tsx`, `Ghost.tsx`, `Cobweb.tsx` to `frontend/src/themes/halloween/`, contents unchanged.
-- [ ] `SpookyLoader.tsx` → `ThemedLoader.tsx` with props `{ message, slowMessage, Icon }`.
-- [ ] `App.tsx` renders `<theme.Decor />` and the themed tagline/banner, and passes `theme` to `NewStoryForm`, `StoryList`, `StoryView`, which read their text and icons from it.
-- [ ] `NewStoryForm` sends `{ idea, theme: theme.id }`. `StoryList` fetches `/api/stories?theme=${theme.id}`.
+- [x] Move `HauntedDecor.tsx`, `Ghost.tsx`, `Cobweb.tsx` to `frontend/src/themes/halloween/`, contents unchanged.
+- [x] `SpookyLoader.tsx` → `ThemedLoader.tsx` with props `{ message, slowMessage, Icon }`.
+- [x] `App.tsx` renders `<theme.Decor />` and the themed tagline/banner, and passes `theme` to `NewStoryForm`, `StoryList`, `StoryView`, which read their text and icons from it.
+- [x] `NewStoryForm` sends `{ idea, theme: theme.id }`. `StoryList` fetches `/api/stories?theme=${theme.id}`.
 
 **Done when:** `./test.sh` passes; the page looks and reads as before; no component outside `themes/` imports a Halloween file.
 

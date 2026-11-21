@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { api, ApiError, post, type NodeOption, type Story, type StoryNode } from './api.ts'
-import Cobweb from './Cobweb.tsx'
-import Ghost from './Ghost.tsx'
-import SpookyLoader from './SpookyLoader.tsx'
+import ThemedLoader from './ThemedLoader.tsx'
+import type { Theme } from './themes.ts'
 
 const MAX_CUSTOM = 100 // matches ChooseRequest in backend/app/schemas.py
 
@@ -11,12 +10,13 @@ const secondaryButton = `min-h-11 rounded-xl border-2 border-field px-5 font-sem
 const primaryButton = `min-h-11 rounded-xl bg-accent px-6 font-semibold text-bg transition hover:shadow-[0_0_18px] hover:shadow-accent/50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:shadow-none ${focusRing}`
 
 type Props = {
+  theme: Theme
   nodeId: number
   onNavigate: (nodeId: number) => void
   onHome: () => void
 }
 
-export default function StoryView({ nodeId, onNavigate, onHome }: Props) {
+export default function StoryView({ theme, nodeId, onNavigate, onHome }: Props) {
   const [node, setNode] = useState<StoryNode | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [reloadKey, setReloadKey] = useState(0)
@@ -114,10 +114,10 @@ export default function StoryView({ nodeId, onNavigate, onHome }: Props) {
 
       <div className="relative">
         {/* Peeks over the card's top edge; the card (painted after it) hides its body. */}
-        <Ghost className="absolute -top-9 right-8 w-10 animate-float opacity-80 motion-reduce:animate-none" />
+        <theme.Icon className="absolute -top-9 right-8 w-10 animate-float opacity-80 motion-reduce:animate-none" />
         <section className="relative isolate rounded-2xl border border-edge bg-surface p-5 sm:p-8">
           {/* -z-10 inside an isolated card: above the card's background, below its text and buttons */}
-          <Cobweb className="absolute right-0 bottom-0 -z-10 w-16 rotate-180 opacity-15" />
+          <theme.CardCorner className="absolute right-0 bottom-0 -z-10 w-16 opacity-15" />
           <p className="font-display text-2xl tracking-wide text-accent sm:text-3xl">{node.story_title}</p>
           <h2 ref={headingRef} tabIndex={-1} className="mt-1 flex items-center gap-3 text-muted focus:outline-none">
             Level {node.level} of {node.max_level}
@@ -180,7 +180,7 @@ export default function StoryView({ nodeId, onNavigate, onHome }: Props) {
                       value={custom}
                       onChange={(e) => setCustom(e.target.value)}
                       maxLength={MAX_CUSTOM}
-                      placeholder="Whistle back at the raven…"
+                      placeholder={theme.copy.customPlaceholder}
                       aria-describedby="custom-count"
                       disabled={choosing}
                       className="min-h-11 flex-1 rounded-xl border-2 border-field bg-bg px-4 py-2 text-base placeholder:text-muted placeholder:italic focus:border-accent focus:ring-4 focus:ring-accent/30 focus:outline-none"
@@ -219,7 +219,7 @@ export default function StoryView({ nodeId, onNavigate, onHome }: Props) {
         </button>
       )}
 
-      {choosing && <SpookyLoader message="The tale unfolds…" />}
+      {choosing && <ThemedLoader message={theme.copy.choosing} slowMessage={theme.copy.slow} Icon={theme.Icon} />}
     </article>
   )
 }
