@@ -12,7 +12,7 @@ For the story interaction, users should have 2 pre generated options and a text 
 
 ★ Core rule: walk the tree when the branch exists, generate only when it doesn't, and never more than one custom branch per node.
 
-The UI is Halloween themed (ghosts, cobwebs, spiders) but stays easy to read and use.
+The UI is themed (Halloween with ghosts, cobwebs and spiders; Christmas with snow, baubles and holly; more later) but stays easy to read and use. Each theme is its own story bank with its own narrator mood, picked by date or by the player: see `SPECS-2.md` and `theme-specs/`.
 
 
 ## Users & actions → API
@@ -25,14 +25,14 @@ The UI is Halloween themed (ghosts, cobwebs, spiders) but stays easy to read and
      Success: create → 201 + row · list → 200 [] in a stated order · delete → 204 -->
 | Method | Path | Body | Success | Errors |
 |--------|------|------|---------|--------|
-| POST   | /api/stories | `{idea}` | 201 story + `root_node_id` | 422, 502, 504 |
-| GET    | /api/stories | | 200 `[story]`, newest first (ties: id desc), `[]` when empty | |
+| POST   | /api/stories | `{idea, theme?}` | 201 story + `root_node_id` | 422, 502, 504 |
+| GET    | /api/stories | `?theme=` (optional) | 200 `[story]` of that theme (all without it), newest first (ties: id desc), `[]` when empty | 422 unknown theme |
 | GET    | /api/stories/{id} | | 200 story + `root_node_id` | 404 |
 | DELETE | /api/stories/{id} (stretch) | | 204 (its nodes are deleted too) | 404 |
 | GET    | /api/nodes/{id} | | 200 node view | 404 |
 | POST   | /api/nodes/{id}/choose | `{slot: "a"\|"b"}` or `{slot: "custom", text}` | 200 existing child (walk) · 201 new child (generated) | 400, 404, 409, 422, 502, 504 |
 
-Story: `{id, title, idea, max_level, root_node_id, created_at}`
+Story: `{id, title, idea, theme, max_level, root_node_id, created_at}`. `theme` (`halloween` | `christmas`, default `halloween`) is set once at creation: see `SPECS-2.md`.
 
 Node view (what the story screen renders):
 ```json
@@ -52,14 +52,14 @@ Node view (what the story screen renders):
      what it writes, where errors show. After a write: what refetches? Missing a GET? Add it to the API. -->
 - start (`NewStoryForm` + `StoryList`): shows hello and introduces this app, idea box with a 0/300 counter, shows previous stories newest first (empty state when none), each opens on click. Reads GET /api/stories, writes POST /api/stories. After create → opens the root node. Stretch: a delete button per card (confirm first) → DELETE /api/stories/{id}, then removes the card. Errors show inline under the form/card.
 - storybox (`StoryView`): shows story title, "Level n of max", the current passage, the 2 options plus the custom one if it exists (explored ones marked), a custom action box with a 0/100 counter (disabled with a reason when the node already has a custom branch), "go back" to the parent node. An ending shows "The End", start over (root) and home. Reads GET /api/nodes/{id}, writes POST /api/nodes/{id}/choose. After a choose → shows the returned child. After a 409 → refetches the node so the existing custom option appears. Errors show inline under the options.
-- loading (`SpookyLoader`): overlay while a story/node is generating. After 10 s it adds "still working" text.
+- loading (`ThemedLoader`): overlay while a story/node is generating. After 10 s it adds "still working" text.
 - back to home, brings user back to the home page which shows start. 
 
 ## Nouns → tables
 <!-- Tables are nouns. Fields should support the rules (plus what the UI shows).
      Constraints: NOT NULL · UNIQUE · FK (on delete: block / cascade?) · CHECK.
      Money → integer cents · times → UTC text. Don't use end, order, user as column names. -->
-- stories(id PK, title NOT NULL 1–120 chars, idea NOT NULL 1–300 chars, max_level INT NOT NULL CHECK 5–10, created_at TIMESTAMPTZ)
+- stories(id PK, title NOT NULL 1–120 chars, idea NOT NULL 1–300 chars, theme TEXT NOT NULL DEFAULT 'halloween' (added in `SPECS-2.md`), max_level INT NOT NULL CHECK 5–10, created_at TIMESTAMPTZ)
 - nodes(id PK, story_id FK → stories ON DELETE CASCADE, parent_id FK → nodes ON DELETE CASCADE (NULL = root), slot 'a'|'b'|'custom' (NULL for root), choice_text ≤ 100 chars (the words of the choice that led here, NULL for root), level INT CHECK 1–10, content TEXT NOT NULL, option_a, option_b (NULL on an ending), is_ending BOOLEAN, created_at TIMESTAMPTZ)
   - UNIQUE (parent_id, slot): at most one a, one b and one custom child per node. This is the custom cap and also settles concurrent requests.
   - Partial unique index: one root per story (`WHERE parent_id IS NULL`).

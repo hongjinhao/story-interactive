@@ -166,9 +166,9 @@ Headless Chromium against `./dev.sh`, for each theme at 1280, 390 and 320 px:
 - [x] Contrast spot-checked against each theme's sheet in `theme-specs/`.
 
 ## Step 10: Docs and deploy (needs the human's OK)
-- [ ] `SPEC.md`: Story gains `theme`; POST/GET rows link to `SPECS-2.md`; line 15 says the UI is themed.
-- [ ] `CLAUDE.md`: "Halloween theme rules" → "Theme rules" (neutral tokens, `themes/<id>/`, keep `ThemeId` in sync on both sides).
-- [ ] `README.md`: theme picker, story banks, how to add a theme.
+- [x] `SPEC.md`: Story gains `theme`; POST/GET rows link to `SPECS-2.md`; line 15 says the UI is themed.
+- [x] `CLAUDE.md`: "Halloween theme rules" → "Theme rules" (neutral tokens, `themes/<id>/`, keep `ThemeId` in sync on both sides).
+- [x] `README.md`: theme picker, story banks, how to add a theme.
 - [ ] Deploy: restart the laptop backend first (the `ALTER TABLE` runs on start), then the Vercel frontend. The old frontend keeps working against the new backend in between.
 
 ## How to add the next theme (later)

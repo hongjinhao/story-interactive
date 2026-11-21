@@ -75,6 +75,7 @@ cd ~/story-interactive && git pull
 sudo systemctl restart story-backend
 ```
 Schema edits need a database reset (`docker compose down -v && docker compose up -d db`), which deletes all stories.
+Exception: additive changes written as `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` (like `stories.theme` from the theme update) apply on the restart, with no reset and no data loss.
 
 ## When something is wrong
 ```bash

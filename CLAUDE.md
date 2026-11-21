@@ -5,9 +5,9 @@ Story Interactive: a choose-your-own-adventure app powered by an LLM (Grok via `
 
 Stories are stored as a tree of nodes. Picking an option that already has a child walks down the tree without calling the LLM. A new choice generates one new child, and each node can have at most one custom branch. The player can walk back up at any time, and a custom action shows up there as an extra option. The core rule: **walk the tree when the branch exists, generate only when it doesn't, and never more than one custom branch per node.**
 
-The UI has a Halloween theme (ghosts, cobwebs, spiders), but readability and ease of use come first.
+The UI comes in themes (Halloween, Christmas, more later), but readability and ease of use come first. Each theme is its own story bank: a story keeps the theme it was created in, which sets the list it appears in and the narrator's mood. The default theme follows the calendar; the player can pick another on the home page.
 
-`SPEC.md` holds the agreed data model, API, rules and edge cases. Read it before planning, build to it, and ask before changing it.
+`SPEC.md` holds the agreed data model, API, rules and edge cases; `SPECS-2.md` adds the theme system, and `theme-specs/` holds one sheet per theme plus the rules every theme must meet (TH1–TH31). Read them before planning, build to them, and ask before changing them.
 
 ## Architecture
 FastAPI backend (`backend/`, port 8000) and React/Vite TypeScript frontend (`frontend/`, port 5173). The Vite dev server proxies `/api/*` to the backend. All database access goes through `backend/app/db.py`, which talks to whichever database `DATABASE_URL` in `.env` picks (Postgres for this project). All LLM access goes through `backend/app/llm.py`.
@@ -32,10 +32,12 @@ Frontend layers (three, matching the backend; no state library, no per-resource 
 
 Styling is Tailwind v4: utility classes in `className`, loaded by the `@tailwindcss/vite` plugin and `@import "tailwindcss";` in `frontend/src/index.css`. No component library, no separate `.css` files per component.
 
-Halloween theme rules:
-- Colour tokens, fonts and keyframes (`float`, `dangle`) go in the `@theme` block in `index.css`. Use the tokens (`bg-night`, `text-bone`, `bg-pumpkin`, ...) rather than one-off hex values.
-- Readability beats spookiness: body text at least 16px (story passages 18px), text contrast at least 4.5:1, a visible focus ring on every control, buttons at least 44px tall. The decorative font is for headings only, never for passages, buttons or inputs.
-- Ghosts, cobwebs and spiders are inline SVG in `HauntedDecor.tsx` (plus the loader). They are `aria-hidden`, `pointer-events-none`, sit behind the content, never cover text or controls, use `motion-reduce:animate-none`, and are thinned out on small screens.
+Theme rules (full list: `theme-specs/README.md`):
+- Colour tokens are named by what they do: `bg`, `surface`, `edge`, `field`, `ink`, `muted`, `accent`, `success`, `danger`, plus `font-display`. The defaults (Halloween), decoration-only extras and keyframes go in the `@theme` block in `index.css`; every other theme sets the same variables in a `[data-theme='<id>']` block. Use the tokens (`bg-surface`, `text-ink`, `bg-accent`, ...) rather than one-off hex values.
+- Readability beats atmosphere: body text at least 16px (story passages 18px), text contrast at least 4.5:1, a visible focus ring on every control, buttons at least 44px tall. The decorative font is for headings only, never for passages, buttons or inputs.
+- Each theme lives in `frontend/src/themes/<id>/` (`Decor`, `Icon`, `CardCorner`, `PickerIcon`) and has an entry in `THEMES` in `frontend/src/themes.ts` with its wording. Components read text and icons from the `theme` prop; never hard-code a theme's wording or icons in a component.
+- Decorations are inline SVG, `aria-hidden`, `pointer-events-none`, sit behind the content, never cover text or controls at any width (check the story page, where the title sits highest), use `motion-reduce:animate-none`, and are thinned out on small screens.
+- A theme id is listed in three places that must match: `ThemeId` in `frontend/src/api.ts`, `schemas.ThemeId` in the backend, and a mood line in `llm.MOODS` (a test checks the last two). Never rename or remove an id that stories use.
 
 ## Commands
 - Run: `./dev.sh` (backend and frontend together)
