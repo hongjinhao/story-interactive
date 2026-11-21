@@ -29,8 +29,11 @@ function Spider({ className, thread }: { className: string; thread: string }) {
 export default function HauntedDecor() {
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-      <Cobweb className="absolute top-0 left-0 w-24 opacity-25 sm:w-40" />
-      <Cobweb className="absolute top-0 right-0 w-24 -scale-x-100 opacity-25 sm:w-40" />
+      {/* Sized per breakpoint to end above or beside the title on the story page, where it sits
+          highest (theme-specs TH14): the title starts 36px down below sm, and at least 94px / 158px /
+          286px in from sm / md / lg. */}
+      <Cobweb className="absolute top-0 left-0 w-8 opacity-25 sm:w-20 md:w-32 lg:w-40" />
+      <Cobweb className="absolute top-0 right-0 w-8 -scale-x-100 opacity-25 sm:w-20 md:w-32 lg:w-40" />
 
       <Spider className="left-[5%]" thread="h-28" />
       <Spider className="right-[9%] [animation-delay:-2s]" thread="h-44" />

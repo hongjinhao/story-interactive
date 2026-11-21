@@ -61,7 +61,7 @@ Contrast:
 ## Decorations (`HauntedDecor.tsx`)
 | Element | Where | Size / count | Opacity | Motion |
 |---|---|---|---|---|
-| Cobwebs | top-left and top-right page corners (right one mirrored) | 2, 96px (160px from sm) | 25% | none |
+| Cobwebs | top-left and top-right page corners, every width (right one mirrored) | 2: 32px, 80px from sm, 128px from md, 160px from lg (kept clear of the title, TH14) | 25% | none |
 | Spiders on threads | top of the page, side margins (lg+) | 3, threads 64–176px | full (`muted` body, `accent` eyes) | `dangle`, 5 s, staggered |
 | Ghosts | side margins (lg+) | 4, 32–56px | 50–60% | `float`, 7 s, staggered |
 | Ghosts | header corners (below lg) | 2, 20–24px | 50% | `float` |
@@ -95,21 +95,21 @@ how the app explains the rules.
 This replaces today's shared line "Lean eerie and atmospheric where it suits the player's idea." so the
 tone should stay the same.
 
-Trial stories (to do in PLAN-2 Step 9):
+Trial stories (PLAN-2 Step 9, 2026-11-20):
 | Idea | Kind | Mood shows? | Format unchanged? |
 |---|---|---|---|
-| A trip to the mountains | neutral | | |
-| A haunted lighthouse | matching | | |
-| A sunny beach picnic | opposite | | |
+| A trip to the mountains | neutral | yes: mist, "an eerie quiet", a glow pulsing like a heartbeat (story 7) | yes: 98 words, 2 command options |
+| A haunted lighthouse | matching | yes: ghostly lullaby, a watchful presence; resolves gently, never graphic (story 5, played to The End + a custom ending) | yes: 95–145 words; the custom ending ran 159 (shared-prompt drift) |
+| A sunny beach picnic | opposite | lightly: stays sunny, with "a faint unease" at the end. The idea wins (TH25) (story 8) | yes, 79 words (one under), 2 options |
 
 ## Content check
 - Trademarks avoided: no Jack Skellington, Hocus Pocus, Ghostbusters or other film imagery. Generic ghosts, spiders, cobwebs and pumpkins only.
 - Cultural notes: secular, folklore Halloween only.
 
 ## Build checklist (PLAN-2)
-- [ ] Token rename (Step 5), no visible change
-- [ ] Moved to `frontend/src/themes/halloween/` + `THEMES` entry with the wording above (Step 6)
-- [ ] `Pumpkin.tsx` picker icon (Step 7)
-- [ ] Mood line in `llm.MOODS` (Step 1)
-- [ ] Trial stories done and noted above
-- [ ] Browser checks (Step 9)
+- [x] Token rename (Step 5), no visible change
+- [x] Moved to `frontend/src/themes/halloween/` + `THEMES` entry with the wording above (Step 6)
+- [x] `Pumpkin.tsx` picker icon (Step 7)
+- [x] Mood line in `llm.MOODS` (Step 1)
+- [x] Trial stories done and noted above
+- [ ] Browser checks (Step 9): all pass except TH14. The small header ghosts (below lg) touch the title/tagline at 414px. Open question, pre-dates PLAN-2. (Corner cobwebs fixed: scaled per breakpoint.)

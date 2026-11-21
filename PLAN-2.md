@@ -156,14 +156,14 @@ string or broken JSON + reload → the seasonal default, no errors.
 
 ## Step 9: Check both themes in the browser
 Headless Chromium against `./dev.sh`, for each theme at 1280, 390 and 320 px:
-- [ ] Create a story → play to The End → ↑ Go back → custom branch → Home → story listed in this bank only.
-- [ ] The Christmas story reads warm and festive; a new Halloween story reads eerie.
-- [ ] Switching bank swaps the list with no flash of the other bank's stories.
-- [ ] Fresh browser (empty `localStorage`) today → opens on Christmas. With the clock faked (Chromium `--fake-time` or a CDP `Emulation.setVirtualTimePolicy`/`Date` override) to Nov 7 → Halloween, Nov 8 → Christmas.
-- [ ] Pick Halloween, reload → Halloween, no flash. Fake the date to Jan 10 → Halloween (pick dropped, new season). Pick Halloween on Nov 20, fake Dec 1 → still Halloween.
-- [ ] Tab through every control: focus ring visible; the picker works with the arrow keys.
-- [ ] Reduced motion: nothing moves. No decoration over text or controls, no horizontal scroll.
-- [ ] Contrast spot-checked against each theme's sheet in `theme-specs/`.
+- [x] Create a story → play to The End → ↑ Go back → custom branch → Home → story listed in this bank only.
+- [x] The Christmas story reads warm and festive; a new Halloween story reads eerie. (Open: the Christmas mood also softens a spooky idea, see theme-specs/christmas.md.)
+- [x] Switching bank swaps the list with no flash of the other bank's stories.
+- [x] Fresh browser (empty `localStorage`) today → opens on Christmas. With the clock faked (Chromium `--fake-time` or a CDP `Emulation.setVirtualTimePolicy`/`Date` override) to Nov 7 → Halloween, Nov 8 → Christmas.
+- [x] Pick Halloween, reload → Halloween, no flash. Fake the date to Jan 10 → Halloween (pick dropped, new season). Pick Halloween on Nov 20, fake Dec 1 → still Halloween.
+- [x] Tab through every control: focus ring visible; the picker works with the arrow keys.
+- [ ] Reduced motion: nothing moves. No decoration over text or controls, no horizontal scroll. (Checked at 18 widths, 320–1440px. Corner cobwebs and holly now scale per breakpoint to stay clear of the title; Christmas's two phone snowflakes removed. Open: Halloween's small header ghosts touch the title/tagline at 414px, pre-existing.)
+- [x] Contrast spot-checked against each theme's sheet in `theme-specs/`.
 
 ## Step 10: Docs and deploy (needs the human's OK)
 - [ ] `SPEC.md`: Story gains `theme`; POST/GET rows link to `SPECS-2.md`; line 15 says the UI is themed.

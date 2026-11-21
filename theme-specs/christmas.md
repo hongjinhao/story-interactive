@@ -61,10 +61,9 @@ Mountains of Christmas is too thin at 400, use 700 everywhere.
 ## Decorations (`FestiveDecor.tsx`)
 | Element | Where | Size / count | Opacity | Motion |
 |---|---|---|---|---|
-| Holly sprigs | top-left and top-right page corners (right one mirrored) | 2, 96px (160px from sm) | 25% | none |
+| Holly sprigs | top-left and top-right page corners, every width (right one mirrored) | 2: 28px, 96px from sm, 128px from md, 160px from lg (kept clear of the title, TH14) | 25% | none |
 | Baubles on threads | top of the page, side margins (lg+) | 3, threads 64–176px | 70–90% | `dangle`, 5 s, staggered |
 | Snowflakes | side margins only (lg+) | 8–10, 12–28px | 30–60% | `snowfall`, 10–18 s, staggered |
-| Snowflakes | header corners (below lg) | 2, 16–20px | 40% | none |
 | Bauble peeking over the story card | card top edge | 1, 40px | 80% | `dangle` |
 
 New keyframes:
@@ -92,12 +91,12 @@ New keyframes:
 `MOODS["christmas"]`:
 > Lean warm and festive: winter wonder, snow, kindness and gentle suspense, with a hopeful tone.
 
-Trial stories (to do in PLAN-2 Step 9):
+Trial stories (PLAN-2 Step 9, 2026-11-20):
 | Idea | Kind | Mood shows? | Format unchanged? |
 |---|---|---|---|
 | A trip to the mountains | neutral | yes: snow, pine, woodsmoke, holiday lights, carolers, cocoa (story 3, 2026-11-20) | yes: 2nd person, ~90–120 words, 2 short command options |
-| A lost reindeer on Christmas Eve | matching | | |
-| A haunted lighthouse | opposite | | |
+| A lost reindeer on Christmas Eve | matching | yes: snowstorm, cosy cabin, carols, a reunion with Santa (story 6, played to The End + a custom ending) | yes: 110–134 words, 2 options |
+| A haunted lighthouse | opposite | **too strong**: "gentle mystery", "a soft, hopeful feeling"; nothing haunted is left, so the mood beat the idea (TH25). Open question (story 9) | yes: 83 words, 2 options |
 
 ## Content check
 - Trademarks avoided: no Rudolph (trademarked), Grinch, Frosty, Elf on the Shelf, or brand imagery
@@ -112,5 +111,5 @@ Trial stories (to do in PLAN-2 Step 9):
 - [x] `index.html`: Mountains of Christmas in the Google Fonts link (Step 8)
 - [x] `frontend/src/themes/christmas/`: `Tree`, `Bauble`, `Holly`, `Snowflake`, `FestiveDecor` (Step 8)
 - [x] `themes.ts`: `ThemeId` + `THEMES` entry with `festival: { month: 12, day: 25 }` and the wording above (Step 8)
-- [ ] Trial stories done and noted above
-- [ ] Browser checks (Step 9) at 1280 / 390 / 320 px, keyboard, reduced motion
+- [x] Trial stories done and noted above (one open question: the opposite trial)
+- [x] Browser checks (Step 9) at 1280 / 1024 / 768 / 640 / 390 / 320 px, keyboard, reduced motion
