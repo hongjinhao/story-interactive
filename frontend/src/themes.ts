@@ -7,9 +7,11 @@ import CardCobweb from './themes/halloween/CardCobweb.tsx'
 import Ghost from './themes/halloween/Ghost.tsx'
 import HauntedDecor from './themes/halloween/HauntedDecor.tsx'
 import Pumpkin from './themes/halloween/Pumpkin.tsx'
+import HalloweenQuill from './themes/halloween/Quill.tsx'
 import Bauble from './themes/christmas/Bauble.tsx'
 import FestiveDecor from './themes/christmas/FestiveDecor.tsx'
 import Holly from './themes/christmas/Holly.tsx'
+import ChristmasQuill from './themes/christmas/Quill.tsx'
 import Tree from './themes/christmas/Tree.tsx'
 
 type IconComponent = ComponentType<{ className?: string }>
@@ -20,8 +22,9 @@ export type Theme = {
   festival?: { month: number; day: number } // 1-based; without one the theme is never picked by date
   PickerIcon: IconComponent // flat one-colour silhouette for ThemePicker (theme-specs TH18)
   Decor: ComponentType // page background layer
-  Icon: IconComponent // loader, and peeking over the story card
-  CardCorner: IconComponent // ornament in the story card's bottom-right corner (caller positions it)
+  Icon: IconComponent // peeks over the book (TH19)
+  CardCorner: IconComponent // ornament in the book page's bottom-right corner (caller positions it)
+  Quill: IconComponent // hand and pen that write in the book; nib tip at the viewBox's bottom-left (TH32)
   copy: {
     tagline: string
     intro: string
@@ -47,6 +50,7 @@ export const THEMES: Theme[] = [
     Decor: HauntedDecor,
     Icon: Ghost,
     CardCorner: CardCobweb,
+    Quill: HalloweenQuill,
     copy: {
       tagline: 'Choose your own adventure… if you dare.',
       intro:
@@ -71,6 +75,7 @@ export const THEMES: Theme[] = [
     Decor: FestiveDecor,
     Icon: Bauble,
     CardCorner: Holly,
+    Quill: ChristmasQuill,
     copy: {
       tagline: 'Choose your own adventure by the fireside.',
       intro:
