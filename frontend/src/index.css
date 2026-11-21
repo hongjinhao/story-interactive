@@ -41,6 +41,9 @@
   --animate-quill-scribble: quill-scribble 0.16s ease-in-out infinite;
   --animate-quill-tap: quill-tap 0.9s ease-in-out infinite;
   --animate-ink-in: ink-in 0.6s ease-out both;
+  /* Home and the book hand over (SPEC-3 "New story", "Home"). */
+  --animate-fade-in: fade-in 0.45s ease both;
+  --animate-fade-out: fade-out 0.35s ease forwards;
 
   @keyframes float {
     0%,
@@ -104,6 +107,20 @@
     }
     30% {
       transform: translate(2px, -8px) rotate(-6deg);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+      transform: translateY(8px);
     }
   }
 

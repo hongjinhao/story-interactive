@@ -119,9 +119,12 @@ mid-generation turns the page back with the error; a second player's custom bran
   (Lora italic, sizes 36→18px, ≤ 4 s), sends `POST /api/stories` with `{ idea, theme }`, then `GET`s the root, then opens the cover.
   On failure: error on the cover with "Try again" and "Home" (R19). Status line: `creating`, `slow` after 10 s.
 - [ ] Home fades out before the book appears; Home from the book fades the home page back in.
+- [ ] Every turn starts by scrolling up to the page-numbering line if it's above the screen (12px gap, smooth;
+  instant with reduced motion), and focus moves with `preventScroll`, so the window never snaps to the top (R20).
 
 **Done when:** `./test.sh` passes; a new story goes form → quill on cover → page 1 with the idea as the action
-line; a 300-character idea fits or truncates on the cover; a failed create (backend stopped) shows Try again and Home.
+line; a 300-character idea fits or truncates on the cover; a failed create (backend stopped) shows Try again and Home;
+turning from the choices at 390×844 and 1366×768 stops with the numbering line in view, not at the top of the window.
 
 ## Step 8: Check both themes in the browser
 Headless Chromium against `./dev.sh`, for each theme at 1280, 390 and 320 px:

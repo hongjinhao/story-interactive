@@ -125,8 +125,10 @@ export default function QuillWriting(props: Props) {
     const pen = penRef.current
     if (still || !layout || !pen) return
     const chars = layout.lines.reduce((n, l) => n + l.text.length, 0)
-    const budget = maxMs - LEAD_MS - HOP_MS * (layout.lines.length - 1)
-    const perChar = Math.min(MS_PER_CHAR, budget / Math.max(1, chars))
+    const hops = layout.lines.length - 1
+    // Many short lines (a long idea on a phone): the hops between lines take at most half the time.
+    const hop = hops > 0 ? Math.min(HOP_MS, (maxMs - LEAD_MS) / 2 / hops) : 0
+    const perChar = Math.min(MS_PER_CHAR, (maxMs - LEAD_MS - hop * hops) / Math.max(1, chars))
     const animations: Animation[] = []
     const timers: number[] = []
     const stops: { at: number; x: number; y: number }[] = []
@@ -147,14 +149,14 @@ export default function QuillWriting(props: Props) {
         )
       }
       timers.push(window.setTimeout(() => setNibDown(true), t), window.setTimeout(() => setNibDown(false), t + duration))
-      t += duration + HOP_MS
+      t += duration + hop
     })
-    const end = t - HOP_MS
+    const end = stops[stops.length - 1].at // exactly the last stop, so its offset is exactly 1
     animations.push(
       pen.animate(
         [
           { transform: `translate(${stops[0].x + 40}px, ${stops[0].y - 50}px)`, opacity: 0, offset: 0 },
-          ...stops.map((s) => ({ transform: `translate(${s.x}px, ${s.y}px)`, opacity: 1, offset: s.at / end })),
+          ...stops.map((s) => ({ transform: `translate(${s.x}px, ${s.y}px)`, opacity: 1, offset: Math.min(1, s.at / end) })),
         ],
         { duration: end, fill: 'forwards' },
       ),

@@ -1,31 +1,24 @@
 import { useState, type FormEvent, type KeyboardEvent } from 'react'
-import { post, type Story } from './api.ts'
-import ThemedLoader from './ThemedLoader.tsx'
 import type { Theme } from './themes.ts'
 
 const MAX_IDEA = 300 // matches StoryCreate in backend/app/schemas.py
 
-type Props = { theme: Theme; onOpen: (nodeId: number) => void }
+type Props = {
+  theme: Theme
+  initialIdea: string // the idea back from a failed create (SPEC-3 R19), or ''
+  onStart: (idea: string) => void // the book screen creates the story (D13)
+}
 
-export default function NewStoryForm({ theme, onOpen }: Props) {
-  const [idea, setIdea] = useState('')
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+// Collects the idea only. Submitting hands it to the book, which writes it on the cover while the story
+// is created.
+export default function NewStoryForm({ theme, initialIdea, onStart }: Props) {
+  const [idea, setIdea] = useState(initialIdea)
 
   const blank = idea.trim() === ''
 
-  async function submit(e: FormEvent) {
+  function submit(e: FormEvent) {
     e.preventDefault()
-    if (blank || saving) return
-    setSaving(true)
-    setError(null)
-    try {
-      const story = await post<Story>('/api/stories', { idea, theme: theme.id }) // R8: the story joins this theme's bank
-      onOpen(story.root_node_id) // this form unmounts, so no need to reset saving
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err))
-      setSaving(false)
-    }
+    if (!blank) onStart(idea.trim())
   }
 
   // Enter summons the tale; Shift+Enter still adds a line break.
@@ -53,7 +46,9 @@ export default function NewStoryForm({ theme, onOpen }: Props) {
           maxLength={MAX_IDEA}
           rows={3}
           placeholder={theme.copy.ideaPlaceholder}
-          aria-describedby={error ? 'idea-count idea-error' : 'idea-count'}
+          aria-describedby="idea-count"
+          // back from a failed create: straight into the box to change the idea or try again
+          autoFocus={initialIdea !== ''}
           className="mt-2 w-full resize-y rounded-xl border-2 border-field bg-bg px-4 py-3 text-base placeholder:text-muted placeholder:italic focus:border-accent focus:ring-4 focus:ring-accent/30 focus:outline-none"
         />
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
@@ -62,20 +57,13 @@ export default function NewStoryForm({ theme, onOpen }: Props) {
           </span>
           <button
             type="submit"
-            disabled={blank || saving}
+            disabled={blank}
             className="min-h-11 rounded-xl bg-accent px-6 font-semibold text-bg transition hover:shadow-[0_0_18px] hover:shadow-accent/50 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:shadow-none"
           >
             {theme.copy.createButton}
           </button>
         </div>
-        {error && (
-          <p id="idea-error" role="alert" className="mt-3 text-danger">
-            {error}
-          </p>
-        )}
       </form>
-
-      {saving && <ThemedLoader message={theme.copy.creating} slowMessage={theme.copy.slow} Icon={theme.Icon} />}
     </section>
   )
 }

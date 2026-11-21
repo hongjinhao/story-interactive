@@ -167,7 +167,10 @@ R18. If generating fails (502, 504, network) the blank page turns back to the pa
      On 409 the same happens, then that page reloads so the existing custom option shows (as today).
 R19. If creating a story fails, the closed book shows the error with "Try again" (sends the same idea) and
      "Home" (back to the form with the idea still in the box).
-R20. After every turn finishes, focus moves to the new page's "Page n of max" heading (as today).
+R20. After every turn finishes, focus moves to the new page's "Page n of max" heading (as today), without
+     scrolling the window. Instead, when a turn starts, if the line with the story title and "Page n of max"
+     is above the screen, the window scrolls up until that line is 12px from the top, and no further (smooth;
+     instant with reduced motion). If it's already on screen, nothing scrolls.
 R21. Reduced motion: no quill, words appear at once, every turn and the cover become a 0.2 s cross-fade.
      Nothing else in the flow changes.
 R22. The quill writes in the passage font (Lora). No handwriting or display font in the action box.
@@ -197,6 +200,8 @@ R23. ★ Fit, never grow: if a page's content doesn't fit the fixed height, the 
 - Page 1 with a 300-character idea in the action box → the passage shrinks first, the box never does
 - Ending page → no choices, so the passage has more room and stays at 18px
 - Reduced motion → R21
+- Scrolled down to the choices on a phone or short laptop screen → the turn scrolls back to the page-numbering
+  line, not to the top of the window; the book's top bar (Home, ↑ Go back, status line) is then just above the screen (R20)
 - Keyboard only → every control reachable, visible focus ring in `page-accent` on paper
 
 ## Theme rule changes (`theme-specs/README.md`)
