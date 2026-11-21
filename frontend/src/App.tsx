@@ -9,7 +9,7 @@ type Health = { status: string }
 
 export default function App({ initialTheme }: { initialTheme: Theme }) {
   const [status, setStatus] = useState('loading')
-  const [nodeId, setNodeId] = useState<number | null>(null) // null = home
+  const [nodeId, setNodeId] = useState<number | null>(null) // the page the book opens on; null = home
   const [theme, setTheme] = useState(initialTheme) // main.tsx picks it (saved pick or season)
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function App({ initialTheme }: { initialTheme: Theme }) {
             <StoryList key={theme.id} theme={theme} onOpen={setNodeId} />
           </>
         ) : (
-          <StoryView theme={theme} nodeId={nodeId} onNavigate={setNodeId} onHome={() => setNodeId(null)} />
+          <StoryView theme={theme} nodeId={nodeId} onHome={() => setNodeId(null)} />
         )}
       </main>
     </div>
