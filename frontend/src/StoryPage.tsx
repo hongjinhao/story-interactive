@@ -1,9 +1,16 @@
-import { useLayoutEffect, useRef, useState, type FormEvent, type Ref } from 'react'
+import { useLayoutEffect, useRef, useState, type FormEvent, type ReactNode, type Ref } from 'react'
 import type { NodeOption, StoryNode } from './api.ts'
 import type { Theme } from './themes.ts'
 
 const MAX_CUSTOM = 100 // matches ChooseRequest in backend/app/schemas.py
 const PASSAGE_SIZES = [18, 17, 16] // px; 16 is the floor (SPEC-3 R23), past it the passage scrolls
+const INK_STEP_MS = 220 // between sentences inking in; the choices follow the last one
+
+// The passage in sentences (keeping every character, so line breaks still show). Anything odd: one piece.
+function sentences(text: string): string[] {
+  const parts = text.match(/[^.!?…]*[.!?…]+["'”’)\]]*\s*|[^.!?…]+$/g) ?? [text]
+  return parts.join('') === text ? parts : [text]
+}
 
 // Paper styles (SPEC-3 "The page"). Only page-* tokens on the paper (TH10).
 const paperRing = 'focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-page-accent'
@@ -31,12 +38,16 @@ type Props = {
   onStartOver: () => void
   onHome: () => void
   headingRef?: Ref<HTMLHeadingElement>
+  action?: ReactNode // drawn in the action box instead of the plain text (the quill writing it)
+  waitingText?: string // the blank page while Grok writes: this line instead of the passage and choices
+  inkIn?: boolean // a page just written: the passage inks in sentence by sentence, then the choices fade in
 }
 
 // One page of the book, drawn from props only (no fetching): header, the action that led here, the
 // passage, then the choices or the ending. It fills the fixed page height (D15).
 export default function StoryPage(props: Props) {
   const { theme, node, busy, error, custom, onCustomChange, onPick, onCustom, onStartOver, onHome, headingRef } = props
+  const { action, waitingText, inkIn = false } = props
   const passageRef = useRef<HTMLDivElement>(null)
   const [passageSize, setPassageSize] = useState(PASSAGE_SIZES[0])
 
@@ -75,7 +86,10 @@ export default function StoryPage(props: Props) {
     if (custom.trim() !== '' && !busy) onCustom()
   }
 
-  const action = node.choice_text ?? node.story_idea // page 1 shows the player's idea (D9)
+  const pieces = inkIn ? sentences(node.content) : [node.content]
+  // The choices (or the ending) fade in after the last sentence.
+  const after = inkIn ? 'animate-ink-in motion-reduce:animate-none' : ''
+  const afterDelay = inkIn ? { animationDelay: `${pieces.length * INK_STEP_MS + 200}ms` } : undefined
 
   return (
     <div className="flex h-full flex-col gap-4 py-6 pr-5 pl-6 sm:pr-10 sm:pl-12">
@@ -91,18 +105,35 @@ export default function StoryPage(props: Props) {
         </h2>
       </div>
 
-      <p className="flex-none rounded-lg bg-page-shade px-4 py-2 font-story text-lg leading-[1.55] text-page-ink">{action}</p>
+      {/* page 1 shows the player's idea (D9) */}
+      <div className="flex-none rounded-lg bg-page-shade px-4 py-2 font-story text-lg leading-[1.55] text-page-ink">
+        {action ?? node.choice_text ?? node.story_idea}
+      </div>
 
       <div
         ref={passageRef}
         style={{ fontSize: passageSize }}
         className={`min-h-0 max-w-prose flex-1 overflow-y-auto font-story leading-[1.65] whitespace-pre-line text-page-ink ${paperRing}`}
       >
-        {node.content}
+        {waitingText ? (
+          <p className="text-page-muted italic">{waitingText}</p>
+        ) : inkIn ? (
+          pieces.map((piece, i) => (
+            <span
+              key={i}
+              className="animate-ink-in motion-reduce:animate-none"
+              style={{ animationDelay: `${i * INK_STEP_MS}ms` }}
+            >
+              {piece}
+            </span>
+          ))
+        ) : (
+          node.content
+        )}
       </div>
 
-      {node.is_ending ? (
-        <div className="flex-none text-center">
+      {waitingText ? null : node.is_ending ? (
+        <div className={`flex-none text-center ${after}`} style={afterDelay}>
           <p className="font-display text-5xl tracking-wide text-page-accent">The End</p>
           <div className="mt-5 flex flex-wrap justify-center gap-3">
             <button type="button" onClick={onStartOver} disabled={busy} className={primaryButton}>
@@ -115,7 +146,7 @@ export default function StoryPage(props: Props) {
         </div>
       ) : (
         // D16/D17: three rows of the same shape, text left, key right. No heading, no "taken" line.
-        <ul className="grid flex-none grid-cols-[minmax(0,1fr)] gap-2.5">
+        <ul className={`grid flex-none grid-cols-[minmax(0,1fr)] gap-2.5 ${after}`} style={afterDelay}>
           {node.options.map((option) => (
             <li key={option.slot}>
               <button
