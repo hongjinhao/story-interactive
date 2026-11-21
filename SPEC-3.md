@@ -201,7 +201,7 @@ R23. ★ Fit, never grow: if a page's content doesn't fit the fixed height, the 
 - Ending page → no choices, so the passage has more room and stays at 18px
 - Reduced motion → R21
 - Scrolled down to the choices on a phone or short laptop screen → the turn scrolls back to the page-numbering
-  line, not to the top of the window; the book's top bar (Home, ↑ Go back, status line) is then just above the screen (R20)
+  line, not to the top of the window; only the header with ← Home is then above the screen (R20)
 - Keyboard only → every control reachable, visible focus ring in `page-accent` on paper
 
 ## Theme rule changes (`theme-specs/README.md`)

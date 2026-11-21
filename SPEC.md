@@ -36,8 +36,8 @@ Story: `{id, title, idea, theme, max_level, root_node_id, created_at}`. `theme` 
 
 Node view (what the story screen renders):
 ```json
-{ "id": 12, "story_id": 3, "story_title": "...", "parent_id": 7, "level": 3, "max_level": 7,
-  "content": "...", "is_ending": false,
+{ "id": 12, "story_id": 3, "story_title": "...", "story_idea": "...", "parent_id": 7, "level": 3, "max_level": 7,
+  "choice_text": "Open the crypt", "content": "...", "is_ending": false,
   "options": [ {"slot": "a", "text": "Open the crypt", "child_id": 15},
                {"slot": "b", "text": "Run to the chapel", "child_id": null},
                {"slot": "custom", "text": "Whistle at the raven", "child_id": 19} ],
@@ -46,13 +46,15 @@ Node view (what the story screen renders):
 - `child_id` is null until that branch has been generated (the UI marks explored options).
 - The `custom` option is only listed once someone has created it. An ending has `options: []`.
 - Walking up = `GET /api/nodes/{parent_id}`. No extra endpoint.
+- `story_idea` is the player's idea; `choice_text` is the choice that led here (`null` on the root). The page shows
+  one of them in its action line (added in `SPEC-3.md`).
 
 ## Page
 <!-- Per component: what it shows (sorted?), what it reads (GETs, dropdowns),
      what it writes, where errors show. After a write: what refetches? Missing a GET? Add it to the API. -->
-- start (`NewStoryForm` + `StoryList`): shows hello and introduces this app, idea box with a 0/300 counter, shows previous stories newest first (empty state when none), each opens on click. Reads GET /api/stories, writes POST /api/stories. After create → opens the root node. Stretch: a delete button per card (confirm first) → DELETE /api/stories/{id}, then removes the card. Errors show inline under the form/card.
-- storybox (`StoryView`): shows story title, "Level n of max", the current passage, the 2 options plus the custom one if it exists (explored ones marked), a custom action box with a 0/100 counter (disabled with a reason when the node already has a custom branch), "go back" to the parent node. An ending shows "The End", start over (root) and home. Reads GET /api/nodes/{id}, writes POST /api/nodes/{id}/choose. After a choose → shows the returned child. After a 409 → refetches the node so the existing custom option appears. Errors show inline under the options.
-- loading (`ThemedLoader`): overlay while a story/node is generating. After 10 s it adds "still working" text.
+- start (`NewStoryForm` + `StoryList`): shows hello and introduces this app, idea box with a 0/300 counter, shows previous stories newest first (empty state when none), each opens on click. Reads GET /api/stories. Submitting an idea opens the book, which writes POST /api/stories and opens the root node (`SPEC-3.md`). Stretch: a delete button per card (confirm first) → DELETE /api/stories/{id}, then removes the card. Errors show inline under the form/card.
+- storybox (`StoryView`): an open book (`SPEC-3.md`), one page per node. Shows story title, "Page n of max", the action line (the choice that led here, or the idea on page 1), the current passage, the 2 options plus the custom one if it exists (explored ones marked), a custom action box with a 0/100 counter (only while the node has no custom branch yet, `SPEC-3.md` D17), "go back" to the parent node. An ending shows "The End", start over (root) and home. Reads GET /api/nodes/{id}, writes POST /api/nodes/{id}/choose. After a choose → shows the returned child. After a 409 → refetches the node so the existing custom option appears. Errors show inline under the options.
+- loading: inside the book (`SPEC-3.md`). A quill writes the idea on the cover, or the action on a blank page, while the story or node is generating, and the status line under the book says so. After 10 s it adds "still working" text.
 - back to home, brings user back to the home page which shows start. 
 
 ## Nouns → tables

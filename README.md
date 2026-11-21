@@ -6,6 +6,10 @@ Each theme is its own **story bank**: a tale keeps the theme it was started in, 
 
 Every tale is stored as a **tree**. Picking a path someone already took walks down the tree instantly, with no LLM call. A new choice generates one new branch. You can walk back up at any time, and a custom action you typed shows up there as an extra option for everyone. Each turn allows at most one custom branch.
 
+The tale is played as a **storybook**: a closed book appears and a quill writes your idea on its cover while the tale is written, then the cover opens onto page 1. Each choice turns the page. A path someone already took turns straight to its page; a new choice turns to a blank page where the quill writes your action while Grok writes the passage, which then inks in. Going back turns the page the other way. Every page has the same height in both themes, and "reduce motion" swaps the quill and the turns for short cross-fades (see [`SPEC-3.md`](SPEC-3.md)).
+
+![A Halloween tale open on page 2: the passage on paper, the action that led there above it, and three choices below](docs/storybook.png)
+
 FastAPI + Postgres backend, React + Vite + Tailwind v4 frontend, Grok (`xai_sdk`) for the writing.
 
 ---
@@ -47,7 +51,7 @@ Always use `./test.sh` (it loads `.env`). Tests run against a separate `app_test
 ## How to play
 0. Pick a theme with the icons at the top of the home page (🎃 pumpkin, 🎄 tree), or keep the season's default. The list below shows that theme's tales.
 1. Type an idea ("A jack-o-lantern that whispers the names of the dead") and press **Summon a tale** (**Spin a tale** in Christmas) or Enter.
-2. Pick **A** or **B**, or type your own action and press **Do it**. Paths marked **👣 explored** were taken before and open instantly.
+2. Pick **A** or **B**, or type your own action and press **✦** (or Enter). Paths marked **explored** were taken before and open instantly.
 3. **↑ Go back** walks up one level; **← Home** returns to the list of tales.
 4. On the last level you reach **The End**: **Start over** goes back to the first passage to try another path.
 
@@ -63,14 +67,15 @@ Always use `./test.sh` (it loads `.env`). Tests run against a separate `app_test
 | Custom action (max 100 chars), one custom branch per turn, shown to everyone afterwards | ✅ (was stretch in the spec) |
 | Walk back up at any time; start over from an ending | ✅ |
 | 5–10 levels; the last level is an ending | ✅ |
-| Loading screen; "still working" after 10 s | ✅ |
+| Loading screen; "still working" after 10 s (the quill on the cover or a blank page, `SPEC-3.md`) | ✅ |
 | Readable error messages for bad input, timeouts and LLM failures | ✅ |
 | Halloween theme: ghosts, cobwebs, spiders, still easy to read | ✅ |
 | Themes as story banks: Christmas theme, per-theme narrator mood, seasonal default, theme picker (`SPECS-2.md`, `PLAN-2.md`) | ✅ |
+| Storybook UI: the book, page turns, the quill, the action line on every page (`SPEC-3.md`, `PLAN-3.md`) | ✅ |
 
 Stretch, not built yet: deleting a tale (`DELETE /api/stories/{id}`, `PLAN.md` Step 5) and the extras in `PLAN.md` Step 6.
 
-The full spec is in [`SPEC.md`](SPEC.md) and the build log, step by step, in [`PLAN.md`](PLAN.md). The theme update is in [`SPECS-2.md`](SPECS-2.md) and [`PLAN-2.md`](PLAN-2.md), with one sheet per theme in [`theme-specs/`](theme-specs/).
+The full spec is in [`SPEC.md`](SPEC.md) and the build log, step by step, in [`PLAN.md`](PLAN.md). The theme update is in [`SPECS-2.md`](SPECS-2.md) and [`PLAN-2.md`](PLAN-2.md), with one sheet per theme in [`theme-specs/`](theme-specs/). The storybook update is in [`SPEC-3.md`](SPEC-3.md) and [`PLAN-3.md`](PLAN-3.md).
 
 ---
 
@@ -88,7 +93,7 @@ browser → Vite :5173 ──/api proxy──> FastAPI :8000
 | Services | `backend/app/services/{stories,nodes}.py` | The rules, the LLM calls, transactions; raise domain errors (`app/errors.py`) |
 | Repositories | `backend/app/repositories/{stories,nodes}.py` | Raw parameterized SQL, one module per table |
 | Adapters | `backend/app/db.py`, `backend/app/llm.py` | Connections/transactions; the only module that talks to xAI |
-| Frontend | `frontend/src/App.tsx` (page state: current node and theme), one file per feature (`NewStoryForm`, `StoryList`, `StoryView`, `ThemedLoader`, `ThemePicker`), `themes.ts` (theme list, seasonal default, saved pick), `themes/<id>/` (each theme's decorations and icons), `api.ts` (fetch wrapper, types, error messages) | |
+| Frontend | `frontend/src/App.tsx` (page state: current node and theme), one file per feature (`NewStoryForm`, `StoryList`, `StoryView`, `ThemePicker`), the book's presentation pieces (`Book`: cover and page turns; `StoryPage`: one page; `QuillWriting`: the quill), `themes.ts` (theme list, seasonal default, saved pick), `themes/<id>/` (each theme's decorations and icons), `api.ts` (fetch wrapper, types, error messages) | |
 
 ### API
 
@@ -128,7 +133,9 @@ browser → Vite :5173 ──/api proxy──> FastAPI :8000
 | **Seasonal default**: a festival's theme until a week after it; a manual pick holds for that season only | Nobody gets stuck on Halloween in December. The theme is applied in `main.tsx` before React's first render, so the page never flashes the wrong theme. |
 | **Allowed theme ids live in code, not a DB `CHECK`** | Adding a theme is a code change plus a sheet, with no migration. |
 | **Decorations in an `absolute` layer under the content**, margins only on wide screens | A `fixed` layer let a ghost drift behind a heading on a phone. Decorations ignore the mouse, are hidden from screen readers and stop for "reduce motion". |
-| **Focus moves to the "Level n of max" heading after each move** | Keyboard and screen-reader users land on the new passage, not a button that disappeared. |
+| **Focus moves to the "Page n of max" heading after each turn**; a turn scrolls up only as far as that line | Keyboard and screen-reader users land on the new passage, not a button that disappeared, and the window never snaps to the top. |
+| **One fixed page height; the passage steps 18 → 17 → 16px to fit** (`SPEC-3.md` R23) | Pages can turn over each other without the book changing size. Past 16px the passage scrolls inside the page. |
+| **A new choice turns to a blank page at once, filled only from the node the backend returns** | The player sees something happen right away, but the UI never invents a node; an error turns back to the page they were on. |
 
 ---
 
@@ -164,13 +171,14 @@ browser → Vite :5173 ──/api proxy──> FastAPI :8000
 - **Postgres only.** `.env.example` defaults to Postgres, but `backend/app/schema/sqlite.sql` still holds the starter's demo table, so switching `DATABASE_URL` to SQLite breaks the app (and plain `uv run pytest`, which ignores `.env` and tests SQLite).
 - **No URL per passage.** The current node lives in React state, so the browser's Back button leaves the app, a refresh returns home, and a passage can't be shared as a link.
 - **No frontend tests.** The UI is covered by the type-checked build, lint, and manual/headless-browser runs (screenshots at 1280, 390 and 320 px, scripted playthroughs in both themes, 18 widths checked for decorations over text), not by automated tests. The seasonal-default logic (`seasonalTheme`) is checked by those runs only.
-- **Themes: open questions.** The Christmas mood softens a spooky idea more than the spec intends (a "haunted lighthouse" became a gentle mystery); Halloween's small header ghosts touch the tagline at about 414 px. Both are noted in `theme-specs/`.
+- **Themes: open questions.** The Christmas mood softens a spooky idea more than the spec intends (a "haunted lighthouse" became a gentle mystery); Halloween's small header ghosts overlap the big home-page title below 1024 px (about 414 px and narrower is where it shows most). Both are noted in `theme-specs/`.
 - **Fixed-date festivals only.** Easter, Lunar New Year and other moving festivals need a date per year (`theme-specs/README.md` TH5). The default follows the device's date.
 - **No limits on generation.** Anyone can create tales and branches; there is no rate limit, quota or cost tracking, and no retry when the LLM fails (the player retries).
 - **Moderation is prompt-only.** The system prompt asks for a general audience; custom actions are passed to the model as written and can steer the tale (intended), and anything a player writes becomes visible to everyone who reaches that turn. No auth, so no way to remove or attribute a branch.
 - **Endings only at `max_level`.** The story can't end early (e.g. a fatal choice at level 3).
 - **422 messages are a bit technical** ("idea: String should have at most 300 characters"); the form's `maxLength` and counters mostly prevent them.
-- **The 👣 explored marker** is an emoji; it renders as a box where no emoji font is installed (it is hidden from screen readers, and the word "explored" carries the meaning).
+- **Long passages scroll inside the page on phones.** The page has a fixed height, and at 16px the longest passages still don't fit on a 320–390px phone. Phones use overlay scrollbars, so there is no visible scrollbar until you scroll.
+- **The storybook's motion was checked by headless-browser scripts with mocked create and choose responses**, not with real Grok calls or a stopped backend.
 - **No pagination** on the tale list (agreed in the spec).
 - **"Start over"** was not clicked in the browser checks; it uses `GET /api/stories/{id}`, which is tested.
 
