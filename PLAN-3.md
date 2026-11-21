@@ -142,7 +142,7 @@ Headless Chromium against `./dev.sh`, for each theme at 1280, 390 and 320 px:
 - [ ] `CLAUDE.md`: mention `SPEC-3.md` next to `SPECS-2.md`; theme rules gain `page-*` tokens and `Quill`; the readability
   line notes passages may step down to 16px to fit the page (R23).
 - [ ] `README.md`: one paragraph and a screenshot of the book.
-- [ ] Deploy: backend first (additive), then the frontend.
+- [x] Deploy: backend first (additive), then the frontend.
 
 ## Risks
 - **Animations and focus.** A turn moves DOM while the player may be tabbing. Controls are disabled during turns
