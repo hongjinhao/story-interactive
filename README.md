@@ -29,7 +29,7 @@ Then set `XAI_API_KEY=xai-...` in `.env`. It is gitignored; never commit the key
 docker compose up -d   # Postgres on 127.0.0.1:5432, Adminer on http://127.0.0.1:8080
 ./dev.sh               # backend http://127.0.0.1:8000, frontend http://localhost:5173
 ```
-Open http://localhost:5173. The footer should say **Backend: ok**; if the backend or database is down, a red banner says so. API docs: http://127.0.0.1:8000/docs.
+Open http://localhost:5173. If the backend or database is down, a red banner at the top says so (`GET /api/health` shows the status). API docs: http://127.0.0.1:8000/docs.
 
 ### Test
 ```bash

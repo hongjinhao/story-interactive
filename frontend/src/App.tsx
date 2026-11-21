@@ -59,10 +59,6 @@ export default function App({ initialTheme }: { initialTheme: Theme }) {
           <StoryView theme={theme} nodeId={nodeId} onNavigate={setNodeId} onHome={() => setNodeId(null)} />
         )}
       </main>
-
-      <footer className="relative z-10 pb-6 text-center text-sm text-muted">
-        Backend: <span className={healthy ? 'text-success' : 'text-danger'}>{status}</span>
-      </footer>
     </div>
   )
 }
