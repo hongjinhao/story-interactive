@@ -6,6 +6,7 @@ import type { ThemeId } from './api.ts'
 import CardCobweb from './themes/halloween/CardCobweb.tsx'
 import Ghost from './themes/halloween/Ghost.tsx'
 import HauntedDecor from './themes/halloween/HauntedDecor.tsx'
+import Pumpkin from './themes/halloween/Pumpkin.tsx'
 
 type IconComponent = ComponentType<{ className?: string }>
 
@@ -13,6 +14,7 @@ export type Theme = {
   id: ThemeId
   label: string // "Halloween"; the picker says "<label> stories"
   festival?: { month: number; day: number } // 1-based; without one the theme is never picked by date
+  PickerIcon: IconComponent // flat one-colour silhouette for ThemePicker (theme-specs TH18)
   Decor: ComponentType // page background layer
   Icon: IconComponent // loader, and peeking over the story card
   CardCorner: IconComponent // ornament in the story card's bottom-right corner (caller positions it)
@@ -37,6 +39,7 @@ export const THEMES: Theme[] = [
     id: 'halloween',
     label: 'Halloween',
     festival: { month: 10, day: 31 },
+    PickerIcon: Pumpkin,
     Decor: HauntedDecor,
     Icon: Ghost,
     CardCorner: CardCobweb,
@@ -80,4 +83,33 @@ export function seasonalTheme(today: Date): Theme {
     }
   }
   return best?.theme ?? findTheme(FALLBACK_THEME) ?? THEMES[0]
+}
+
+// A manual pick is saved with the season it was made in, and only holds for that season (SPECS-2 R11).
+const STORAGE_KEY = 'story-theme'
+
+// The theme to open on: this season's saved pick, otherwise the seasonal default. Anything odd in
+// storage (unknown theme, old season, wrong shape, broken JSON, storage blocked) means the default.
+export function startingTheme(today: Date): Theme {
+  const season = seasonalTheme(today)
+  try {
+    const saved: unknown = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null')
+    if (typeof saved === 'object' && saved !== null) {
+      const { theme, season: savedSeason } = saved as Record<string, unknown>
+      const pick = findTheme(theme)
+      if (pick && savedSeason === season.id) return pick
+    }
+  } catch {
+    // storage blocked or broken JSON: fall through to the default
+  }
+  return season
+}
+
+// Remember a manual pick. Blocked storage just means it lasts for this visit only.
+export function savePick(theme: ThemeId, today: Date): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ theme, season: seasonalTheme(today).id }))
+  } catch {
+    // private mode or storage disabled
+  }
 }

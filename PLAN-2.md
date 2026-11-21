@@ -115,27 +115,27 @@ Tests (`test_choose.py`):
 **Done when:** `./test.sh` passes; the page looks and reads as before; no component outside `themes/` imports a Halloween file.
 
 ## Step 7: Seasonal default, picker and saved choice
-- [ ] `themes.ts`: `startingTheme(today: Date): Theme`. It reads `localStorage['story-theme']` in `try`,
+- [x] `themes.ts`: `startingTheme(today: Date): Theme`. It reads `localStorage['story-theme']` in `try`,
   parses `{theme, season}`, and returns the saved theme only if both ids are known and
   `season === seasonalTheme(today).id`. Anything else → `seasonalTheme(today)`.
   `savePick(theme: ThemeId, today: Date)` writes `{theme, season: seasonalTheme(today).id}` in `try`.
-- [ ] `main.tsx`: before `createRoot(...).render`, `const start = startingTheme(new Date())`, set
+- [x] `main.tsx`: before `createRoot(...).render`, `const start = startingTheme(new Date())`, set
   `document.documentElement.dataset.theme = start.id`, and pass `start.id` to `<App initialTheme=… />`.
   This runs before React's first render, so the content never shows in the wrong theme. There's no inline
   script in `index.html` and no second copy of the date logic.
-- [ ] `App.tsx`: `themeId` state starts from `initialTheme`. A pick calls `setThemeId`, sets
+- [x] `App.tsx`: `themeId` state starts from `initialTheme`. A pick calls `setThemeId`, sets
   `document.documentElement.dataset.theme` and calls `savePick`. The date default is never saved, only
   manual picks are.
-- [ ] Check `seasonalTheme` with a throwaway script in the scratchpad (`node` 24 runs `.ts` directly):
+- [x] Check `seasonalTheme` with a throwaway script in the scratchpad (`node` 24 runs `.ts` directly):
   Oct 31, Nov 7 → halloween; Nov 8, Nov 20, Dec 25, Jan 1 → christmas; Jan 2, Feb 29 2028, Jul 4 → halloween.
   (The repo has no frontend test runner. Adding Vitest would be a new library, so it needs a separate yes.)
-- [ ] `themes/halloween/Pumpkin.tsx`: flat silhouette, `viewBox="0 0 24 24"`, one `fill-current` path (a slightly squashed round body with two shallow rib notches cut out, a short stem on top). No faces, no outlines. It's Halloween's `PickerIcon`.
-- [ ] `ThemePicker.tsx`, at the top middle of the home page above the title (`flex justify-center gap-2`):
+- [x] `themes/halloween/Pumpkin.tsx`: flat silhouette, `viewBox="0 0 24 24"`, one `fill-current` path (a slightly squashed round body with two shallow rib notches cut out, a short stem on top). No faces, no outlines. It's Halloween's `PickerIcon`.
+- [x] `ThemePicker.tsx`, at the top middle of the home page above the title (`flex justify-center gap-2`):
   - `role="radiogroup"`, `aria-label="Story theme"`. One `role="radio"` button per theme with `aria-checked`, `aria-label` / `title` = "`<label>` stories". The icon is `aria-hidden`.
   - Each button is `size-11` (44px) with the icon `size-6` (24px) inside. Unselected: `text-muted opacity-70 hover:opacity-100`. Selected: `text-accent` plus a 4px `bg-accent` dot under the icon. No background fill, border or animation.
   - `focus-visible` ring in `accent`. Left/Right arrows move and select (roving `tabIndex`).
   - Shown on the home page only. Check `muted` at 70% opacity stays ≥ 3:1 on `bg` in both themes; if not, use full opacity.
-- [ ] `StoryList`: refetches when `theme.id` changes and ignores a stale response (an `ignore` flag in the effect cleanup).
+- [x] `StoryList`: refetches when `theme.id` changes and ignores a stale response (an `ignore` flag in the effect cleanup).
 
 **Done when:** `./test.sh` passes; the date checks above pass; the picker shows one button (Halloween,
 the only theme with a festival so far, so it's also the default); a saved value of `"easter"`, a plain
