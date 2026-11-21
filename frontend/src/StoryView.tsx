@@ -1,13 +1,11 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { api, ApiError, post, type NodeOption, type Story, type StoryNode } from './api.ts'
+import StoryPage from './StoryPage.tsx'
 import ThemedLoader from './ThemedLoader.tsx'
 import type { Theme } from './themes.ts'
 
-const MAX_CUSTOM = 100 // matches ChooseRequest in backend/app/schemas.py
-
 const focusRing = 'focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent'
-const secondaryButton = `min-h-11 rounded-xl border-2 border-field px-5 font-semibold transition hover:border-accent ${focusRing}`
-const primaryButton = `min-h-11 rounded-xl bg-accent px-6 font-semibold text-bg transition hover:shadow-[0_0_18px] hover:shadow-accent/50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:shadow-none ${focusRing}`
+const secondaryButton = `min-h-11 rounded-xl border-2 border-field px-5 font-semibold transition hover:border-accent disabled:cursor-not-allowed disabled:opacity-50 ${focusRing}`
 
 type Props = {
   theme: Theme
@@ -74,11 +72,6 @@ export default function StoryView({ theme, nodeId, onNavigate, onHome }: Props) 
     }
   }
 
-  function submitCustom(e: FormEvent) {
-    e.preventDefault()
-    if (custom.trim() !== '') void choose({ slot: 'custom', text: custom })
-  }
-
   async function startOver() {
     if (!node) return
     try {
@@ -103,121 +96,64 @@ export default function StoryView({ theme, nodeId, onNavigate, onHome }: Props) 
   }
   if (!node) return <p className="text-center text-muted">Opening the tale…</p>
 
-  const customOption = node.options.find((o) => o.slot === 'custom')
   const parentId = node.parent_id
 
   return (
     <article>
-      <button type="button" onClick={onHome} className={`mb-6 ${secondaryButton}`}>
-        ← Home
-      </button>
-
-      <div className="relative">
-        {/* Peeks over the card's top edge; the card (painted after it) hides its body. */}
-        <theme.Icon className="absolute -top-9 right-8 w-10 animate-float opacity-80 motion-reduce:animate-none" />
-        <section className="relative isolate rounded-2xl border border-edge bg-surface p-5 sm:p-8">
-          {/* -z-10 inside an isolated card: above the card's background, below its text and buttons */}
-          <theme.CardCorner className="absolute right-0 bottom-0 -z-10 w-16 opacity-15" />
-          <p className="font-display text-2xl tracking-wide text-accent sm:text-3xl">{node.story_title}</p>
-          <h2 ref={headingRef} tabIndex={-1} className="mt-1 flex items-center gap-3 text-muted focus:outline-none">
-            Level {node.level} of {node.max_level}
-            <span aria-hidden="true" className="flex gap-1">
-              {Array.from({ length: node.max_level }, (_, i) => (
-                <span key={i} className={`h-2 w-2 rounded-full ${i < node.level ? 'bg-accent' : 'bg-edge'}`} />
-              ))}
-            </span>
-          </h2>
-
-          <p className="mt-5 max-w-prose font-story text-lg leading-[1.7] whitespace-pre-line">{node.content}</p>
-
-          {node.is_ending ? (
-            <div className="mt-8 text-center">
-              <p className="font-display text-5xl tracking-wide text-accent">The End</p>
-              <div className="mt-6 flex flex-wrap justify-center gap-3">
-                <button type="button" onClick={startOver} className={primaryButton}>
-                  Start over
-                </button>
-                <button type="button" onClick={onHome} className={secondaryButton}>
-                  Home
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="mt-8">
-              <h3 className="font-semibold">What do you do?</h3>
-              <ul className="mt-3 grid gap-3">
-                {node.options.map((option) => (
-                  <li key={option.slot}>
-                    <button
-                      type="button"
-                      onClick={() => pick(option)}
-                      disabled={choosing}
-                      className={`flex min-h-11 w-full items-center gap-3 rounded-xl border-2 border-field bg-bg px-4 py-3 text-left transition hover:border-accent disabled:cursor-not-allowed ${focusRing}`}
-                    >
-                      <span aria-hidden="true" className="font-display text-xl text-accent">
-                        {option.slot === 'custom' ? '✦' : option.slot.toUpperCase()}
-                      </span>
-                      <span className="flex-1">{option.text}</span>
-                      {option.slot === 'custom' && <span className="text-sm text-muted italic">a player's path</span>}
-                      {option.child_id !== null && (
-                        <span className="text-sm whitespace-nowrap text-success">
-                          <span aria-hidden="true">👣 </span>explored
-                        </span>
-                      )}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-
-              {node.can_add_custom ? (
-                <form onSubmit={submitCustom} className="mt-6">
-                  <label htmlFor="custom-action" className="block font-semibold">
-                    Or write your own action
-                  </label>
-                  <div className="mt-2 flex flex-col gap-3 sm:flex-row">
-                    <input
-                      id="custom-action"
-                      value={custom}
-                      onChange={(e) => setCustom(e.target.value)}
-                      maxLength={MAX_CUSTOM}
-                      placeholder={theme.copy.customPlaceholder}
-                      aria-describedby="custom-count"
-                      disabled={choosing}
-                      className="min-h-11 flex-1 rounded-xl border-2 border-field bg-bg px-4 py-2 text-base placeholder:text-muted placeholder:italic focus:border-accent focus:ring-4 focus:ring-accent/30 focus:outline-none"
-                    />
-                    <button type="submit" disabled={custom.trim() === '' || choosing} className={primaryButton}>
-                      Do it
-                    </button>
-                  </div>
-                  <p id="custom-count" className="mt-2 text-sm text-muted">
-                    {custom.length}/{MAX_CUSTOM}
-                  </p>
-                </form>
-              ) : (
-                <div className="mt-6">
-                  <p className="font-semibold">Or write your own action</p>
-                  <p className="mt-2 text-muted">
-                    Someone has already written their own path here
-                    {customOption ? <>: “{customOption.text}”, listed above</> : null}. Each turn allows one.
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-
-          {chooseError && (
-            <p role="alert" className="mt-4 text-danger">
-              {chooseError}
-            </p>
-          )}
-        </section>
+      {/* D12: the big title and theme picker are on the home page only. */}
+      <div className="mb-14 flex items-center justify-between gap-4">
+        <button type="button" onClick={onHome} disabled={choosing} className={`whitespace-nowrap ${secondaryButton}`}>
+          ← Home
+        </button>
+        <h1 className="text-right font-display text-xl tracking-wide text-accent sm:text-2xl">Story Interactive</h1>
       </div>
 
-      {parentId !== null && (
-        <button type="button" onClick={() => go(parentId)} className={`mt-6 ${secondaryButton}`}>
-          ↑ Go back
-        </button>
-      )}
+      <div className="relative flow-root">
+        {/* Peeks over the book's top edge (TH19); the page, painted after it, hides its lower half. */}
+        <theme.Icon className="absolute -top-9 right-8 w-10 animate-float opacity-80 motion-reduce:animate-none" />
+        {/* D7: the open book. The left side shows what lies open there (the inside of the cover on page 1,
+            the back of the last page after that), cut off by a soft fade at the book's left edge. The
+            padding/negative margin give the page's drop shadow room inside the mask; flow-root on the
+            wrapper keeps that negative margin from moving the peeking icon. */}
+        <div className="-my-10 grid grid-cols-[minmax(0,12fr)_minmax(0,100fr)] py-10 [mask-image:linear-gradient(90deg,transparent,#000_6%)] sm:grid-cols-[minmax(0,30fr)_minmax(0,100fr)] sm:[mask-image:linear-gradient(90deg,transparent,#000_12%)]">
+          <div
+            aria-hidden="true"
+            className={`rounded-l-[0.9rem] ${
+              node.level === 1
+                ? 'bg-linear-to-bl from-book-cover to-book-cover-deep shadow-[inset_-20px_0_24px_-14px_rgb(0_0_0/0.55)]'
+                : 'bg-linear-to-r from-page-back to-page shadow-[inset_-20px_0_24px_-16px_rgb(0_0_0/0.4)]'
+            }`}
+          />
+          {/* D15: one fixed height on every page. Light paper: native scrollbars and inputs follow. */}
+          <section className="relative isolate h-[60rem] rounded-r-[0.9rem] bg-page text-page-ink shadow-[0_30px_60px_-25px_rgb(0_0_0/0.85),inset_18px_0_22px_-16px_rgb(0_0_0/0.4)] [color-scheme:light] sm:h-[52rem]">
+            {/* -z-10 inside an isolated page: above the paper, below its text and buttons (TH20) */}
+            <theme.CardCorner className="absolute right-0 bottom-0 -z-10 w-16 opacity-15" />
+            <StoryPage
+              theme={theme}
+              node={node}
+              busy={choosing}
+              error={chooseError}
+              custom={custom}
+              onCustomChange={setCustom}
+              onPick={pick}
+              onCustom={() => void choose({ slot: 'custom', text: custom })}
+              onStartOver={startOver}
+              onHome={onHome}
+              headingRef={headingRef}
+            />
+          </section>
+        </div>
+      </div>
+
+      <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+        {parentId !== null && (
+          <button type="button" onClick={() => go(parentId)} disabled={choosing} className={secondaryButton}>
+            ↑ Go back
+          </button>
+        )}
+        {/* Filled while waiting once the quill replaces ThemedLoader (PLAN-3 Step 6). */}
+        <p role="status" aria-live="polite" className="min-h-[1.6em] text-muted italic" />
+      </div>
 
       {choosing && <ThemedLoader message={theme.copy.choosing} slowMessage={theme.copy.slow} Icon={theme.Icon} />}
     </article>

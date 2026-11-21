@@ -33,16 +33,17 @@ export default function App({ initialTheme }: { initialTheme: Theme }) {
     <div className="relative flex min-h-screen flex-col">
       <theme.Decor />
       <main className="relative z-10 mx-auto w-full max-w-3xl flex-1 px-4 py-10 sm:py-16">
-        <header className="mb-10 text-center">
-          {/* Home page only: a story always shows in its own bank's theme (D4). */}
-          {nodeId === null && (
+        {/* Home page only (SPEC-3 D12); the book screen has its own small title. A story always shows in
+            its own bank's theme (D4), so the picker is home-only too. */}
+        {nodeId === null && (
+          <header className="mb-10 text-center">
             <div className="-mt-4 mb-4 sm:-mt-8">
               <ThemePicker value={theme.id} onChange={pickTheme} />
             </div>
-          )}
-          <h1 className="font-display text-5xl tracking-wide text-accent sm:text-6xl">Story Interactive</h1>
-          <p className="mt-3 text-lg text-muted">{theme.copy.tagline}</p>
-        </header>
+            <h1 className="font-display text-5xl tracking-wide text-accent sm:text-6xl">Story Interactive</h1>
+            <p className="mt-3 text-lg text-muted">{theme.copy.tagline}</p>
+          </header>
+        )}
 
         {!healthy && (
           <p role="alert" className="mb-6 rounded-xl border border-danger bg-surface p-4 text-danger">

@@ -18,12 +18,12 @@ const rings = RINGS.map(
 ).join('')
 const WEB = threads + rings
 
-type Props = { className?: string }
+type Props = { className?: string; strokeClassName?: string } // stroke-page-ink on the book's paper
 
-export default function Cobweb({ className = '' }: Props) {
+export default function Cobweb({ className = '', strokeClassName = 'stroke-ink' }: Props) {
   return (
     <svg viewBox={`0 0 ${SPAN} ${SPAN}`} aria-hidden="true" className={`pointer-events-none ${className}`}>
-      <path d={WEB} fill="none" strokeWidth={1} strokeLinecap="round" className="stroke-ink" />
+      <path d={WEB} fill="none" strokeWidth={1} strokeLinecap="round" className={strokeClassName} />
     </svg>
   )
 }
