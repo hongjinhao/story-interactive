@@ -21,7 +21,12 @@ def get_node_view(conn, node_id: int) -> dict:
     if custom:
         options.append({"slot": "custom", "text": custom["choice_text"], "child_id": custom["id"]})
 
-    return {**node, "options": options, "can_add_custom": not node["is_ending"] and custom is None}
+    return {
+        **node,
+        "story_idea": node["idea"],
+        "options": options,
+        "can_add_custom": not node["is_ending"] and custom is None,
+    }
 
 
 def choose(conn, node_id: int, slot: str, text: str | None) -> tuple[dict, bool]:

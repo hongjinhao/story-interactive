@@ -49,9 +49,11 @@ class NodeView(BaseModel):
     id: int
     story_id: int
     story_title: str
+    story_idea: str
     parent_id: int | None
     level: int
     max_level: int
+    choice_text: str | None  # the choice that led here (option text or custom action); None on the root
     content: str
     is_ending: bool
     options: list[NodeOption]  # a, b, then custom if one exists; [] on an ending

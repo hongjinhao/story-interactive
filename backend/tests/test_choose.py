@@ -49,6 +49,8 @@ def test_choose_new_option_generates_child_201(client, fake_llm, story):
     assert [o["text"] for o in child["options"]] == ["Option A at level 2", "Option B at level 2"]
     assert child["is_ending"] is False
     assert child["can_add_custom"] is True
+    assert child["choice_text"] == "Open the creaking door"
+    assert child["story_idea"] == "a carnival that never closes"
 
 
 def test_choose_same_option_again_walks_200_without_llm(client, fake_llm, story):
@@ -66,6 +68,7 @@ def test_options_a_and_b_lead_to_different_children(client, story):
     b = choose(client, root, "b").json()
     assert a["id"] != b["id"]
     assert b["content"] == "Level 2: you chose 'Run back to the road'."
+    assert (a["choice_text"], b["choice_text"]) == ("Open the creaking door", "Run back to the road")
 
 
 @pytest.mark.parametrize("theme", ["halloween", "christmas"])
@@ -116,6 +119,7 @@ def test_custom_choice_generates_branch_listed_on_parent(client, story):
     assert r.status_code == 201
     custom = r.json()
     assert custom["content"] == "Level 2: you chose 'Ride the carousel backwards'."
+    assert custom["choice_text"] == "Ride the carousel backwards"
     parent = client.get(f"/api/nodes/{root}").json()
     assert parent["options"][2] == {
         "slot": "custom", "text": "Ride the carousel backwards", "child_id": custom["id"],
@@ -129,6 +133,7 @@ def test_same_custom_text_walks_to_it(client, fake_llm, story):
     r = choose(client, root, "custom", "ride the CAROUSEL backwards")
     assert r.status_code == 200
     assert r.json()["id"] == first["id"]
+    assert r.json()["choice_text"] == "Ride the carousel backwards"  # the stored words, not the retyped ones
     assert len(generations(fake_llm)) == 1
 
 

@@ -23,9 +23,11 @@ export type StoryNode = {
   id: number
   story_id: number
   story_title: string
+  story_idea: string
   parent_id: number | null
   level: number
   max_level: number
+  choice_text: string | null // the choice that led here; null on the root
   content: string
   is_ending: boolean
   options: NodeOption[] // a, b, then custom if one exists; [] on an ending

@@ -34,9 +34,11 @@ def test_root_node_view(client, story):
         "id": story["root_node_id"],
         "story_id": story["id"],
         "story_title": "The Haunted Test",
+        "story_idea": "a lighthouse that knocks back",
         "parent_id": None,
         "level": 1,
         "max_level": story["max_level"],
+        "choice_text": None,
         "content": "Your tale begins: a lighthouse that knocks back",
         "is_ending": False,
         "options": [
@@ -60,6 +62,7 @@ def test_custom_branch_listed_third_and_blocks_another(client, story):
     view = client.get(f"/api/nodes/{root}").json()
     assert view["options"][2] == {"slot": "custom", "text": "Whistle at the raven", "child_id": custom}
     assert view["can_add_custom"] is False
+    assert client.get(f"/api/nodes/{custom}").json()["choice_text"] == "Whistle at the raven"
 
 
 def test_child_node_view_points_to_parent(client, story):
@@ -68,6 +71,8 @@ def test_child_node_view_points_to_parent(client, story):
     view = client.get(f"/api/nodes/{child}").json()
     assert view["parent_id"] == root
     assert view["level"] == 2
+    assert view["choice_text"] == "Run back to the road"
+    assert view["story_idea"] == "a lighthouse that knocks back"
     assert view["content"] == "After 'Run back to the road'..."
     assert [o["text"] for o in view["options"]] == ["Climb higher", "Turn back"]
 
