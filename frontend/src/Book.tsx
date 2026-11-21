@@ -22,6 +22,7 @@ type Props = {
   firstPage: boolean // page 1: the inside of the cover lies on the left; after that, paper
   cover: CoverState
   coverContent: ReactNode // on the cover's front: the title, or the quill writing the idea
+  back?: ReactNode // the Go back control, drawn at the spine's foot while a page (not the cover) lies on the left
   children: Page
   onSettled: () => void // a turn, the opening or the closing (after the fade) has finished
 }
@@ -32,7 +33,7 @@ const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)'
 // Presentation only: it never fetches and never decides where a turn goes (R15). Forward, the old page
 // lifts away to the left; back, the new page swings in from the left. Each leaf carries an inert,
 // aria-hidden copy of its page. Calls onSettled when the motion has finished.
-export default function Book({ pageKey, direction, firstPage, cover, coverContent, children, onSettled }: Props) {
+export default function Book({ pageKey, direction, firstPage, cover, coverContent, back, children, onSettled }: Props) {
   const rootRef = useRef<HTMLDivElement>(null)
   const leafRef = useRef<HTMLDivElement>(null)
   const coverRef = useRef<HTMLDivElement>(null)
@@ -124,7 +125,7 @@ export default function Book({ pageKey, direction, firstPage, cover, coverConten
 
   return (
     // overflow-x: clip, so a swinging leaf never makes the window scroll sideways
-    <div ref={rootRef} className="overflow-x-clip">
+    <div ref={rootRef} className="relative overflow-x-clip">
       {/* The padding/negative margin give the page's drop shadow room inside the mask. */}
       <div className="-my-10 grid grid-cols-[minmax(0,12fr)_minmax(0,100fr)] py-10 [mask-image:linear-gradient(90deg,transparent,#000_6%)] [perspective:2200px] sm:grid-cols-[minmax(0,30fr)_minmax(0,100fr)] sm:[mask-image:linear-gradient(90deg,transparent,#000_12%)]">
         <div aria-hidden="true" className={`rounded-l-[0.9rem] ${SIDE_STYLE[left]}`} />
@@ -147,6 +148,10 @@ export default function Book({ pageKey, direction, firstPage, cover, coverConten
           )}
         </div>
       </div>
+      {/* Outside the faded mask so it stays fully visible; its left edge is the spine. bottom-16: the 2.5rem shadow room below the page, plus 1.5rem. */}
+      {back && left === 'paper' && (
+        <div className="absolute bottom-16 left-[calc(100%*12/112)] z-20 sm:left-[calc(100%*30/130)]">{back}</div>
+      )}
     </div>
   )
 }

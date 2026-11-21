@@ -20,7 +20,7 @@ unchanged. Animation never decides anything and never hides an error.
   of the cover** (in the cover's own colour) on page 1, and the **back of the previous page** (blank paper)
   after that. Never any text. On phones the strip is about 12% of the page width, so the page stays wide enough
   for 18px text. A closed book shows only the cover. A turning page or the cover never fades out: it swings over
-  and lands on the left side, which then shows it. Decorative only: `aria-hidden`, no controls.
+  and lands on the left side, which then shows it. Decorative (`aria-hidden`) apart from the Go back tab (D18).
 - D8. "Level n of max" becomes **"Page n of max"** everywhere in the UI. The API keeps `level` / `max_level`.
 - D9. Each page shows, top to bottom: story title and "Page n of max" (with progress dots), **the action
   that led here** in a grey box, the passage, then the choices and the custom-action box. The action is in
@@ -34,6 +34,15 @@ unchanged. Animation never decides anything and never hides an error.
   row says it (this replaces `SPEC.md`'s "disabled with a reason"). "explored" stays: it's information.
 - D17. **All choices look the same**: three rows, text on the left and a key on the right (`[A]`, `[B]`, `[✦]`).
   The third row is the custom input, or the existing custom option once someone has written one.
+- D18. **Go back sits on the left side of the book**, where the previous page lies, as a tab at the foot of the
+  spine, 24px above the page's bottom edge, beside the last choice. It replaces the "↑ Go back" button under the book.
+  - Phones (under 640px): the left strip is too narrow for a 44px button, so a round 44px "‹" tab sits across the
+    spine, half on the strip and half on the page's empty left margin (never over text).
+  - From 640px: a 56×80px "‹ Back" tab on the left page, just left of the spine.
+  - Paper styles: `page-accent` text on `page`, `page-edge` border, filled with `page-accent` on hover, focus
+    ring in `page-accent`. Screen readers hear "Go back a page". It comes after the choices in tab order.
+  - Shown only while paper lies on the left (never on page 1, where the inside of the cover is, and never on a
+    closed book). It fades out during every turn and while a page is being written (R17).
 - D10. The pages are **light paper with dark ink**. The rest of the screen stays dark. This is the one light
   surface in the app and has its own tokens (`page-*`, below). Themes stay dark otherwise (TH10 amended).
 - D11. The quill writes during every wait for Grok: the idea on the cover while a story is created, the chosen
@@ -74,7 +83,7 @@ book screen takes over. Picking a story from the list calls `onOpen(rootNodeId)`
 | **Open a saved story** | The book appears closed with the story title on the cover (already written, no pen) and opens straight away. | `GET /api/nodes/{root}` |
 | **Pick an explored option** | The page turns forward to the child. | `GET /api/nodes/{child}` first, then the turn |
 | **Pick a new option / custom action** | The page turns forward to a blank page. The quill writes the action at the top; the passage area says `theme.copy.choosing`. When the node arrives, the passage inks in sentence by sentence, then the choices fade in. | `POST /api/nodes/{id}/choose` sent before the turn starts |
-| **↑ Go back** | A page swings back over from the left onto the parent. | `GET /api/nodes/{parent}` first |
+| **Go back** (the tab on the left side, D18) | A page swings back over from the left onto the parent. | `GET /api/nodes/{parent}` first |
 | **Start over** (ending) | One backward turn to page 1. | `GET /api/stories/{id}`, `GET /api/nodes/{root}` |
 | **Home** | The cover swings shut, the book fades out and is removed, the home page fades in. | none |
 
@@ -159,7 +168,7 @@ red never looks like the theme's own colour (TH9).
 R15. ★ A forward turn happens only after the tree says where it goes: a walk turns once `GET` has returned
      the child; a generate turns to a blank page at once, but the page is only filled from the node the
      backend returned. The UI never invents a node.
-R16. A back turn always goes to `parent_id` (R6). Page 1 has no "↑ Go back".
+R16. A back turn always goes to `parent_id` (R6). Page 1 has no Go back tab.
 R17. While a turn, the cover or a generation is running, every control in the book is disabled, so a
      choice can't be sent twice (replaces the overlay that `ThemedLoader` used for this).
 R18. If generating fails (502, 504, network) the blank page turns back to the page the player was on, and the
@@ -203,6 +212,7 @@ R23. ★ Fit, never grow: if a page's content doesn't fit the fixed height, the 
 - Scrolled down to the choices on a phone or short laptop screen → the turn scrolls back to the page-numbering
   line, not to the top of the window; only the header with ← Home is then above the screen (R20)
 - Keyboard only → every control reachable, visible focus ring in `page-accent` on paper
+- 320px phone → the round Go back tab ends about 2px before the custom-action row: close, but never over it (D18)
 
 ## Theme rule changes (`theme-specs/README.md`)
 - TH8 adds the `page-*` and `foil` pairs above.

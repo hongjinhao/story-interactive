@@ -144,6 +144,16 @@ Headless Chromium against `./dev.sh`, for each theme at 1280, 390 and 320 px:
 - [ ] `README.md`: one paragraph and a screenshot of the book.
 - [x] Deploy: backend first (additive), then the frontend.
 
+## Step 10: Go back on the left side of the book (D18)
+- [x] `Book.tsx`: a `back` slot, drawn outside the faded mask at the foot of the spine, only while paper lies on the left.
+- [x] `StoryView.tsx`: passes the tab (round "‹" on phones, "‹ Back" from 640px, "Go back a page" for screen
+  readers), hidden while busy; the "↑ Go back" button under the book is removed.
+- [x] `SPEC-3.md` (D7, D18, the flow table, R16, an edge case) and the README's "How to play".
+
+**Done when:** `./test.sh` passes; in both themes at 320, 390, 640 and 1280px the tab is at least 44px, never
+covers text, causes no sideways scroll, is absent on page 1 and during turns, shows its focus ring from the
+keyboard, and turns back with focus on "Page n of max"; its text contrast is at least 4.5:1 (measured 7.1–7.8:1).
+
 ## Risks
 - **Animations and focus.** A turn moves DOM while the player may be tabbing. Controls are disabled during turns
   and the leaf is `inert`, and focus is set only after the turn settles (R17, R20).

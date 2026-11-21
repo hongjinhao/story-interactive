@@ -19,6 +19,10 @@ type Props = {
 
 const COVER_SIZES = [36, 32, 28, 24, 22, 20, 18] // the idea on the cover shrinks, then truncates (R23)
 // On the closed cover (R19): foil on the cover colours (9.2:1 / 6.2:1), and the cover's deep colour on foil.
+// Go back, on the left side of the book (the previous page): a round tab on the spine on phones, where the
+// left side is too narrow for a 44px button; from sm, a tab on the left page next to the spine.
+const backTab =
+  'flex size-11 -translate-x-1/2 flex-col items-center justify-center rounded-full border-2 border-page-edge bg-page text-page-accent shadow-[0_4px_10px_-4px_rgb(0_0_0/0.5)] transition hover:border-page-accent hover:bg-page-accent hover:text-page focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-page-accent sm:-ml-3 sm:h-20 sm:w-14 sm:-translate-x-full sm:gap-1 sm:rounded-xl sm:bg-page/70 sm:hover:-translate-x-[calc(100%+3px)]'
 const coverRing = 'focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-foil'
 const coverPrimary = `min-h-11 rounded-xl border-2 border-foil bg-foil px-5 font-semibold text-book-cover-deep ${coverRing}`
 const coverSecondary = `min-h-11 rounded-xl border-2 border-foil/70 px-5 font-semibold text-foil transition hover:border-foil ${coverRing}`
@@ -306,6 +310,20 @@ export default function StoryView({ theme, start, onHome }: Props) {
           direction={direction}
           firstPage={page?.parent_id === null}
           cover={cover}
+          back={
+            parentId !== null && (
+              <button
+                type="button"
+                onClick={() => !busy && void walkTo(parentId, 'back')}
+                disabled={busy}
+                aria-label="Go back a page"
+                className={`${backTab} ${busy ? 'pointer-events-none opacity-0' : ''}`}
+              >
+                <span aria-hidden="true" className="font-story text-2xl leading-none">‹</span>
+                <span aria-hidden="true" className="hidden text-sm font-semibold sm:block">Back</span>
+              </button>
+            )
+          }
           coverContent={
             // The quill writes the idea on the way in; on the way out the cover shows the title.
             idea === null || cover === 'closing' ? (
@@ -392,11 +410,6 @@ export default function StoryView({ theme, start, onHome }: Props) {
       </div>
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
-        {parentId !== null && (
-          <button type="button" onClick={() => !busy && void walkTo(parentId, 'back')} disabled={busy} className={secondaryButton}>
-            ↑ Go back
-          </button>
-        )}
         <p role="status" aria-live="polite" className="ml-auto min-h-[1.6em] text-muted italic">
           {waiting ? (slow ? theme.copy.slow : creating ? theme.copy.creating : theme.copy.choosing) : ''}
         </p>

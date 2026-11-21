@@ -52,7 +52,7 @@ Always use `./test.sh` (it loads `.env`). Tests run against a separate `app_test
 0. Pick a theme with the icons at the top of the home page (🎃 pumpkin, 🎄 tree), or keep the season's default. The list below shows that theme's tales.
 1. Type an idea ("A jack-o-lantern that whispers the names of the dead") and press **Summon a tale** (**Spin a tale** in Christmas) or Enter.
 2. Pick **A** or **B**, or type your own action and press **✦** (or Enter). Paths marked **explored** were taken before and open instantly.
-3. **↑ Go back** walks up one level; **← Home** returns to the list of tales.
+3. The **‹ Back** tab on the left side of the book (a round **‹** on phones) turns back one page; **← Home** returns to the list of tales.
 4. On the last level you reach **The End**: **Start over** goes back to the first passage to try another path.
 
 ---
