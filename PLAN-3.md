@@ -19,7 +19,7 @@ App  open: null | {idea} | {nodeId}
 
 ## Step 0: Spec and rule edits (docs only)
 - [ ] `theme-specs/README.md`: TH8, TH10, TH11, TH16, TH19, TH23 as in `SPEC-3.md` "Theme rule changes"; add TH32 (`Quill`).
-- [ ] `theme-specs/halloween.md`, `christmas.md`: add the `page-*`, `cover`, `foil` values and their measured
+- [ ] `theme-specs/halloween.md`, `christmas.md`: add the `page-*`, `book-cover`, `foil` values and their measured
   contrast rows; describe each theme's `Quill`.
 - [ ] `theme-specs/TEMPLATE.md`: the new token rows, contrast rows and a `Quill` row.
 
@@ -41,8 +41,8 @@ Tests (`test_nodes.py`, `test_choose.py`):
 
 ## Step 2: Paper tokens (no visible change yet)
 - [ ] `index.css`: `--color-page`, `--color-page-back`, `--color-page-shade`, `--color-page-ink`, `--color-page-muted`,
-  `--color-page-edge`, `--color-page-accent`, `--color-page-success`, `--color-page-danger`, `--color-cover`,
-  `--color-cover-deep`, `--color-foil` in `@theme` (Halloween), and the Christmas values in
+  `--color-page-edge`, `--color-page-accent`, `--color-page-success`, `--color-page-danger`, `--color-book-cover`,
+  `--color-book-cover-deep`, `--color-foil` in `@theme` (Halloween), and the Christmas values in
   `[data-theme='christmas']`. Contrast comment with the `SPEC-3.md` numbers.
 - [ ] Keyframes for the quill (`quill-scribble`, `quill-tap`) and the ink-in (`ink-in`) in `@theme` (TH17).
 

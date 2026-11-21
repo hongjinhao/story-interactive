@@ -15,12 +15,32 @@
   --color-danger: #ff6b6b; /* errors */
   --color-holly: #d7263d; /* Christmas decoration only (berries, stripes), never text */
 
+  /* The book (SPEC-3.md): the one light surface, used only inside the book (TH10). Contrast on page:
+     page-ink 12.5:1 (10.4:1 on page-shade), page-muted 6.1:1, page-accent 7.8:1 (page text on it 7.8:1),
+     page-success 5.1:1, page-danger 5.9:1, page-edge borders 4.3:1; foil on cover 9.2:1. */
+  --color-page: #efe4cc; /* paper */
+  --color-page-back: #e2d4b6; /* back of a turning page, the left-side strip; decorative */
+  --color-page-shade: #ddd1b9; /* the grey action box */
+  --color-page-ink: #2b2118; /* passage and body text on paper */
+  --color-page-muted: #5e5146; /* secondary text on paper */
+  --color-page-edge: #7a6650; /* input and button borders on paper, 3:1+ */
+  --color-page-accent: #5b2a86; /* story title, primary button (page-colour text), focus ring on paper */
+  --color-page-success: #2f6b2a; /* explored marker on paper */
+  --color-page-danger: #a3242a; /* errors on paper */
+  --color-book-cover: #2a1838; /* the book cover; decorative. Not "cover": bg-cover is Tailwind's background-size */
+  --color-book-cover-deep: #160c20; /* the cover's shadow and inside; decorative */
+  --color-foil: #ffb25e; /* writing and frame on the cover */
+
   --font-display: "Creepster", "Lora", Georgia, serif; /* headings only */
   --font-story: "Lora", Georgia, serif; /* story passages */
 
   --animate-float: float 7s ease-in-out infinite;
   --animate-dangle: dangle 5s ease-in-out infinite;
   --animate-snowfall: snowfall 14s linear infinite;
+  /* The quill (TH16: short loading motion while it writes, exempt from the 3 s rule; gone with reduced motion). */
+  --animate-quill-scribble: quill-scribble 0.16s ease-in-out infinite;
+  --animate-quill-tap: quill-tap 0.9s ease-in-out infinite;
+  --animate-ink-in: ink-in 0.6s ease-out both;
 
   @keyframes float {
     0%,
@@ -60,6 +80,44 @@
       opacity: 0;
     }
   }
+
+  /* the nib wobbling on the paper while a line is written */
+  @keyframes quill-scribble {
+    0%,
+    100% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+      transform: translate(1px, -2px) rotate(-2deg);
+    }
+    75% {
+      transform: translate(-1px, 1px) rotate(1.5deg);
+    }
+  }
+
+  /* waiting for Grok after the writing: lift the pen a little and tap it down again */
+  @keyframes quill-tap {
+    0%,
+    60%,
+    100% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    30% {
+      transform: translate(2px, -8px) rotate(-6deg);
+    }
+  }
+
+  /* a sentence of the passage appearing as if the ink were soaking in */
+  @keyframes ink-in {
+    from {
+      opacity: 0;
+      filter: blur(2px);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
 }
 
 /* Christmas (theme-specs/christmas.md). Same tokens, new values; <html data-theme> switches them.
@@ -75,6 +133,21 @@
   --color-accent: #f2c14e; /* gold */
   --color-success: #9fd8ff; /* frost */
   --color-danger: #ff8a80; /* coral, kept apart from holly red */
+  /* The book. Contrast on page: page-ink 12.3:1 (10.1:1 on page-shade), page-muted 6.4:1, page-accent 7.2:1
+     (page text on it 7.2:1), page-success 6.1:1, page-danger 5.8:1, page-edge 3.8:1; foil on cover 6.2:1.
+     Pine green accent and frost blue success keep page-danger red apart from the theme's own red (TH9). */
+  --color-page: #f7f1e1;
+  --color-page-back: #ebe2cb;
+  --color-page-shade: #e2dccd;
+  --color-page-ink: #23301f;
+  --color-page-muted: #4f5a4a;
+  --color-page-edge: #6f7f6a;
+  --color-page-accent: #1d5a3a; /* pine */
+  --color-page-success: #1f5f8a; /* frost blue */
+  --color-page-danger: #b3261e;
+  --color-book-cover: #8c1c2b; /* holly red */
+  --color-book-cover-deep: #4f0d17;
+  --color-foil: #f6d27a; /* gold */
   --font-display: "Mountains of Christmas", "Lora", Georgia, serif; /* only the 700 weight is loaded */
 }
 

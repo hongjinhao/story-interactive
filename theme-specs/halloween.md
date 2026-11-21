@@ -58,8 +58,8 @@ The book's pages are the one light surface in the app. These tokens are used onl
 | `page-accent` | `#5b2a86` | story title, primary button, focus ring on paper | |
 | `page-success` | `#2f6b2a` | explored marker on paper | |
 | `page-danger` | `#a3242a` | errors on paper | |
-| `cover` | `#2a1838` | the book cover | decorative |
-| `cover-deep` | `#160c20` | the cover's shadow and inside | decorative |
+| `book-cover` | `#2a1838` | the book cover | decorative |
+| `book-cover-deep` | `#160c20` | the cover's shadow and inside | decorative |
 | `foil` | `#ffb25e` | writing and frame on the cover | |
 
 Contrast:
@@ -73,7 +73,7 @@ Contrast:
 | `page-danger` on `page` | 4.5:1 | 5.9:1 |
 | `page` text on `page-accent` (primary button) | 4.5:1 | 7.8:1 |
 | `page-edge` on `page` | 3:1 | 4.3:1 |
-| `foil` on `cover` | 4.5:1 | 9.2:1 |
+| `foil` on `book-cover` | 4.5:1 | 9.2:1 |
 
 Old parchment with sepia ink; `page-accent` is a deep violet so the paper keeps the haunted feel. `foil` is the pumpkin glow on a midnight-purple cover.
 

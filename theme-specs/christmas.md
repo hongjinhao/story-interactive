@@ -55,8 +55,8 @@ The book's pages are the one light surface in the app. These tokens are used onl
 | `page-accent` | `#1d5a3a` | story title, primary button, focus ring on paper | |
 | `page-success` | `#1f5f8a` | explored marker on paper | |
 | `page-danger` | `#b3261e` | errors on paper | |
-| `cover` | `#8c1c2b` | the book cover | decorative |
-| `cover-deep` | `#4f0d17` | the cover's shadow and inside | decorative |
+| `book-cover` | `#8c1c2b` | the book cover | decorative |
+| `book-cover-deep` | `#4f0d17` | the cover's shadow and inside | decorative |
 | `foil` | `#f6d27a` | writing and frame on the cover | |
 
 Contrast:
@@ -70,7 +70,7 @@ Contrast:
 | `page-danger` on `page` | 4.5:1 | 5.8:1 |
 | `page` text on `page-accent` (primary button) | 4.5:1 | 7.2:1 |
 | `page-edge` on `page` | 3:1 | 3.8:1 |
-| `foil` on `cover` | 4.5:1 | 6.2:1 |
+| `foil` on `book-cover` | 4.5:1 | 6.2:1 |
 
 TH9: `page-accent` is pine green and `page-success` frost blue, so `page-danger` red never looks like the theme's own colour. The cover is holly red with gold `foil`.
 

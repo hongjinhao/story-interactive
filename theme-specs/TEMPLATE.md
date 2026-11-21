@@ -54,8 +54,8 @@ Used only inside the book (TH10). Light paper, dark ink.
 | `page-accent` | | story title, primary button, focus ring on paper | |
 | `page-success` | | explored marker on paper | |
 | `page-danger` | | errors on paper (TH9: unlike any theme colour) | |
-| `cover` | | the book cover | decorative |
-| `cover-deep` | | the cover's shadow and inside | decorative |
+| `book-cover` | | the book cover | decorative |
+| `book-cover-deep` | | the cover's shadow and inside | decorative |
 | `foil` | | writing and frame on the cover | |
 
 Contrast (fill in measured ratios, TH8):
@@ -69,7 +69,7 @@ Contrast (fill in measured ratios, TH8):
 | `page-danger` on `page` | 4.5:1 | |
 | `page` text on `page-accent` (primary button) | 4.5:1 | |
 | `page-edge` on `page` | 3:1 | |
-| `foil` on `cover` | 4.5:1 | |
+| `foil` on `book-cover` | 4.5:1 | |
 
 ## Type (TH11, TH12)
 | Role | Font |
@@ -84,7 +84,7 @@ Contrast (fill in measured ratios, TH8):
 | `PickerIcon` | <flat silhouette, describe the shape> | `currentColor` only |
 | `Icon` | <peeks over the book> | |
 | `CardCorner` | <corner ornament> | |
-| `Quill` | <hand holding a pen, nib at the bottom-left; readable on `page` and `cover`> | |
+| `Quill` | <hand holding a pen, nib at the bottom-left; readable on `page` and `book-cover`> | |
 
 ## Decorations (TH13–TH17)
 | Element | Where | Size / count | Opacity | Motion (keyframe, duration) |
@@ -129,7 +129,7 @@ Trial stories (TH27):
 ## Build checklist
 - [ ] Sheet approved
 - [ ] Backend: id in `schemas.ThemeId`, line in `llm.MOODS`; `./test.sh`
-- [ ] `index.css`: `[data-theme='<id>']` block with all tokens (incl. `page-*`, `cover`, `cover-deep`, `foil`) + extras; new keyframes in `@theme`
+- [ ] `index.css`: `[data-theme='<id>']` block with all tokens (incl. `page-*`, `book-cover`, `book-cover-deep`, `foil`) + extras; new keyframes in `@theme`
 - [ ] `index.html`: display font added to the Google Fonts link
 - [ ] `frontend/src/themes/<id>/`: `PickerIcon`, `Icon`, `CardCorner`, `Decor`, `Quill`
 - [ ] `themes.ts`: `ThemeId` union + `THEMES` entry (label, festival, components, copy)

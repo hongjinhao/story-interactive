@@ -49,8 +49,8 @@ These are fixed. A theme sheet can't override them. Changing one means changing 
   - `edge` and theme-only extras are decorative and have no minimum, and are never used for text.
   - On the book's paper (`page`, `SPEC-3.md`): `page-ink` on `page` and on `page-shade` ≥ 7:1; `page-muted`,
     `page-accent`, `page-success`, `page-danger` on `page` ≥ 4.5:1; `page` text on `page-accent` (primary
-    button) ≥ 4.5:1; `page-edge` on `page` ≥ 3:1 (borders must be findable); `foil` on `cover` ≥ 4.5:1.
-    `page-back`, `cover-deep` are decorative and never used for text.
+    button) ≥ 4.5:1; `page-edge` on `page` ≥ 3:1 (borders must be findable); `foil` on `book-cover` ≥ 4.5:1.
+    `page-back`, `book-cover-deep` are decorative and never used for text.
 - TH9. `danger` must be clearly different from any decorative colour, so an error never looks like decoration.
 - TH10. All themes are dark for now (`color-scheme: dark` is global), except the book's paper, which uses the
   `page-*` tokens. Those tokens are used only inside the book, never elsewhere on the screen. A light theme
@@ -83,7 +83,7 @@ These are fixed. A theme sheet can't override them. Changing one means changing 
 - TH19. `Icon`: peeks over the book's top edge (~40px). May have 2–3 token colours.
 - TH20. `CardCorner`: a small corner ornament inside the story card, behind its text, ≤ 20% opacity.
 - TH32. `Quill`: a hand holding a pen, one inline SVG, nib tip at the bottom-left corner of its viewBox, coloured
-  with tokens, readable on both `page` and `cover`, no text. `aria-hidden`, `pointer-events-none`. Only shown
+  with tokens, readable on both `page` and `book-cover`, no text. `aria-hidden`, `pointer-events-none`. Only shown
   while writing (`SPEC-3.md`), never as decoration.
 
 ### Words

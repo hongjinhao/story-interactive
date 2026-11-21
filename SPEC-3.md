@@ -135,7 +135,7 @@ and measured contrast go in each theme sheet.
 | `page-accent` | story title, primary button, focus ring on paper | `#5b2a86` | `#1d5a3a` |
 | `page-success` | explored marker on paper | `#2f6b2a` | `#1f5f8a` |
 | `page-danger` | errors on paper | `#a3242a` | `#b3261e` |
-| `cover`, `cover-deep` | the book cover (decorative) | `#2a1838`, `#160c20` | `#8c1c2b`, `#4f0d17` |
+| `book-cover`, `book-cover-deep` | the book cover (decorative) | `#2a1838`, `#160c20` | `#8c1c2b`, `#4f0d17` |
 | `foil` | writing and frame on the cover | `#ffb25e` | `#f6d27a` |
 
 Measured contrast (WCAG 2.x) on `page`:
@@ -150,7 +150,7 @@ Measured contrast (WCAG 2.x) on `page`:
 | `page-danger` | 4.5:1 | 5.9 | 5.8 |
 | `page` text on `page-accent` (primary button) | 4.5:1 | 7.8 | 7.2 |
 | `page-edge` (borders) | 3:1 | 4.3 | 3.8 |
-| `foil` on `cover` | 4.5:1 | 9.2 | 6.2 |
+| `foil` on `book-cover` | 4.5:1 | 9.2 | 6.2 |
 
 Christmas uses pine green for `page-accent` and frost blue for `page-success`, so that `page-danger`
 red never looks like the theme's own colour (TH9).
@@ -209,7 +209,7 @@ R23. ★ Fit, never grow: if a page's content doesn't fit the fixed height, the 
 - TH23: "Level n of max" → "Page n of max". "Or write your own action" stays as the input's screen-reader label.
   "What do you do?" and "a player's path" are removed.
 - New TH32: `Quill`, a hand holding a pen, one inline SVG, nib tip at the bottom-left corner of its viewBox,
-  coloured with tokens, readable on both `page` and `cover`, no text.
+  coloured with tokens, readable on both `page` and `book-cover`, no text.
 
 ## Scope
 **This update:** the book screen (cover, one page, page turns forward and back, close on Home), the quill
