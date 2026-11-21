@@ -7,6 +7,10 @@ import CardCobweb from './themes/halloween/CardCobweb.tsx'
 import Ghost from './themes/halloween/Ghost.tsx'
 import HauntedDecor from './themes/halloween/HauntedDecor.tsx'
 import Pumpkin from './themes/halloween/Pumpkin.tsx'
+import Bauble from './themes/christmas/Bauble.tsx'
+import FestiveDecor from './themes/christmas/FestiveDecor.tsx'
+import Holly from './themes/christmas/Holly.tsx'
+import Tree from './themes/christmas/Tree.tsx'
 
 type IconComponent = ComponentType<{ className?: string }>
 
@@ -57,6 +61,30 @@ export const THEMES: Theme[] = [
       listLoading: 'Gathering the tales…',
       emptyList: 'No tales haunt this place yet… summon the first one above.',
       unreachable: "The spirits can't be reached",
+    },
+  },
+  {
+    id: 'christmas',
+    label: 'Christmas',
+    festival: { month: 12, day: 25 },
+    PickerIcon: Tree,
+    Decor: FestiveDecor,
+    Icon: Bauble,
+    CardCorner: Holly,
+    copy: {
+      tagline: 'Choose your own adventure by the fireside.',
+      intro:
+        'Describe an idea and the elves will write the story, one choice at a time. Each tale lasts 5 to 10 turns: pick one of two paths, or type your own.',
+      ideaPlaceholder: 'A lost reindeer, a snowed-in inn, a toy that wakes at midnight…',
+      createButton: 'Spin a tale',
+      creating: 'Wrapping up your tale…',
+      choosing: 'The tale unfolds…',
+      slow: 'The sleigh is running late… still working.',
+      customPlaceholder: 'Knock on the cabin door…',
+      listHeading: 'Tales by the fire',
+      listLoading: 'Gathering the tales…',
+      emptyList: 'No tales by the tree yet… spin the first one above.',
+      unreachable: "The North Pole can't be reached",
     },
   },
 ]

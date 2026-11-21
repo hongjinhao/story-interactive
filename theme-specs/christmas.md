@@ -7,7 +7,7 @@
 | Label | Christmas ("Christmas stories") |
 | Festival | Dec 25 |
 | Default window | Nov 8 – Jan 1 |
-| Status | proposed (built in PLAN-2 Step 8) |
+| Status | built (PLAN-2 Step 8), browser checks in Step 9 |
 | One-line feel | A cosy winter night by the fire: pine green, snow and gold light, warm and hopeful |
 
 ## Palette
@@ -70,7 +70,7 @@ Mountains of Christmas is too thin at 400, use 700 everywhere.
 New keyframes:
 - `snowfall`: fall from just above the top to below the page's visible area with a slight sideways
   drift, linear, then repeat. Flakes are in the margins, so they never pass behind text.
-- `twinkle`: opacity 0.4 ↔ 1, 4 s. Optional, for 2–3 flakes only.
+- `twinkle`: dropped. An element runs one animation class and the flakes already use `snowfall`.
 
 ## Wording
 | Key | Where it shows | Text |
@@ -106,11 +106,11 @@ Trial stories (to do in PLAN-2 Step 9):
   or other religious symbols in decorations or the mood line. Players can still write any story they like.
 
 ## Build checklist (PLAN-2)
-- [ ] Sheet approved
-- [ ] Backend: `"christmas"` in `schemas.ThemeId`, line in `llm.MOODS` (Steps 1–2)
-- [ ] `index.css`: `[data-theme='christmas']` block + `holly`; `snowfall`, `twinkle` in `@theme` (Step 8)
-- [ ] `index.html`: Mountains of Christmas in the Google Fonts link (Step 8)
-- [ ] `frontend/src/themes/christmas/`: `Tree`, `Bauble`, `Holly`, `Snowflake`, `FestiveDecor` (Step 8)
-- [ ] `themes.ts`: `ThemeId` + `THEMES` entry with `festival: { month: 12, day: 25 }` and the wording above (Step 8)
+- [x] Sheet approved (with SPECS-2 and PLAN-2, 2026-11-20)
+- [x] Backend: `"christmas"` in `schemas.ThemeId`, line in `llm.MOODS` (Steps 1–2)
+- [x] `index.css`: `[data-theme='christmas']` block + `holly`; `snowfall` in `@theme` (Step 8)
+- [x] `index.html`: Mountains of Christmas in the Google Fonts link (Step 8)
+- [x] `frontend/src/themes/christmas/`: `Tree`, `Bauble`, `Holly`, `Snowflake`, `FestiveDecor` (Step 8)
+- [x] `themes.ts`: `ThemeId` + `THEMES` entry with `festival: { month: 12, day: 25 }` and the wording above (Step 8)
 - [ ] Trial stories done and noted above
 - [ ] Browser checks (Step 9) at 1280 / 390 / 320 px, keyboard, reduced motion

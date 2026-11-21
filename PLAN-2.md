@@ -142,15 +142,15 @@ the only theme with a festival so far, so it's also the default); a saved value 
 string or broken JSON + reload → the seasonal default, no errors.
 
 ## Step 8: Christmas theme
-- [ ] `index.html`: add `family=Mountains+of+Christmas:wght@400;700` to the Google Fonts link.
-- [ ] `index.css`: a `[data-theme='christmas'] { … }` block with all ten values from `theme-specs/christmas.md`, plus `--color-holly`. Add `snowfall` (fall with a slight sideways drift) and `twinkle` (opacity 0.4 ↔ 1) to `@theme`. Add a contrast comment.
-- [ ] `frontend/src/themes/christmas/`:
+- [x] `index.html`: add `family=Mountains+of+Christmas:wght@700` to the Google Fonts link (700 only, so every display heading uses the bolder cut).
+- [x] `index.css`: a `[data-theme='christmas'] { … }` block with all ten values from `theme-specs/christmas.md`, plus `--color-holly`. Add `snowfall` (fall with a slight sideways drift) to `@theme` (`twinkle` dropped, see the sheet). `--color-holly` also goes in `@theme` so `fill-holly` exists. Add a contrast comment.
+- [x] `frontend/src/themes/christmas/`:
   - `Snowflake.tsx`: 6-armed inline SVG, `stroke-ink`.
   - `Bauble.tsx`: bauble with a cap and a holly stripe (`fill-accent`, `fill-holly`). The theme's `Icon`.
   - `Holly.tsx`: two leaves and three berries. The `CardCorner`.
   - `FestiveDecor.tsx`: same layer rules as `HauntedDecor`. Holly in the top corners (≈25% opacity), 2–3 baubles dangling on threads in the margins (lg+, `animate-dangle`), 8–10 snowflakes falling in the margins only (lg+, staggered, 10–18 s, 30–60% opacity), 2 still flakes in the header corners below lg. `motion-reduce:animate-none` on everything that moves.
-- [ ] `themes/christmas/Tree.tsx`: flat silhouette, `viewBox="0 0 24 24"`, one `fill-current` path (three stacked triangles getting wider downwards, a small square trunk). No star, baubles or outline. It's Christmas's `PickerIcon`.
-- [ ] `themes.ts`: add `'christmas'` (label "Christmas", `PickerIcon: Tree`, `festival: { month: 12, day: 25 }`, the components above, the wording from `theme-specs/christmas.md`). Rerun the date checks from Step 7.
+- [x] `themes/christmas/Tree.tsx`: flat silhouette, `viewBox="0 0 24 24"`, one `fill-current` path (three stacked triangles getting wider downwards, a small square trunk). No star, baubles or outline. It's Christmas's `PickerIcon`.
+- [x] `themes.ts`: add `'christmas'` (label "Christmas", `PickerIcon: Tree`, `festival: { month: 12, day: 25 }`, the components above, the wording from `theme-specs/christmas.md`). Rerun the date checks from Step 7.
 
 **Done when:** `./test.sh` passes; Christmas restyles the page and shows an empty bank; a story created there is listed only under Christmas.
 
