@@ -1,6 +1,6 @@
 # Theme: <Name>
 
-<!-- Copy this file to theme-specs/<id>.md and fill in every section. Rules TH1–TH31 are in README.md.
+<!-- Copy this file to theme-specs/<id>.md and fill in every section. Rules TH1–TH32 are in README.md.
      Get the sheet approved before building. -->
 
 ## Identity
@@ -41,19 +41,50 @@ Contrast (fill in measured ratios, TH8):
 | `field` on `bg` | 3:1 | |
 | `muted` @ 70% on `bg` | 3:1 | |
 
+## Paper and cover (`SPEC-3.md`, TH8, TH10)
+Used only inside the book (TH10). Light paper, dark ink.
+| Token | Hex | Use | Notes |
+|---|---|---|---|
+| `page` | | paper | |
+| `page-back` | | back of a turning page, the left-side strip | decorative |
+| `page-ink` | | passage and body text on paper | |
+| `page-muted` | | secondary text on paper | |
+| `page-edge` | | input and button borders on paper | |
+| `page-shade` | | the grey action box | |
+| `page-accent` | | story title, primary button, focus ring on paper | |
+| `page-success` | | explored marker on paper | |
+| `page-danger` | | errors on paper (TH9: unlike any theme colour) | |
+| `cover` | | the book cover | decorative |
+| `cover-deep` | | the cover's shadow and inside | decorative |
+| `foil` | | writing and frame on the cover | |
+
+Contrast (fill in measured ratios, TH8):
+| Pair | Minimum | Ratio |
+|---|---|---|
+| `page-ink` on `page` | 7:1 | |
+| `page-ink` on `page-shade` (action box) | 7:1 | |
+| `page-muted` on `page` | 4.5:1 | |
+| `page-accent` on `page` | 4.5:1 | |
+| `page-success` on `page` | 4.5:1 | |
+| `page-danger` on `page` | 4.5:1 | |
+| `page` text on `page-accent` (primary button) | 4.5:1 | |
+| `page-edge` on `page` | 3:1 | |
+| `foil` on `cover` | 4.5:1 | |
+
 ## Type (TH11, TH12)
 | Role | Font |
 |---|---|
 | Display (headings only) | <Google Font>, fallback `"Lora", Georgia, serif` |
-| Passages | Lora 18px (fixed) |
+| Passages | Lora 18px, down to 16px only to fit the page (fixed, R23) |
 | Body, buttons, inputs | system sans (fixed) |
 
-## Icons (TH18–TH20)
+## Icons (TH18–TH20, TH32)
 | Component | What it shows | Colours |
 |---|---|---|
 | `PickerIcon` | <flat silhouette, describe the shape> | `currentColor` only |
-| `Icon` | <loader + story-card peeker> | |
+| `Icon` | <peeks over the book> | |
 | `CardCorner` | <corner ornament> | |
+| `Quill` | <hand holding a pen, nib at the bottom-left; readable on `page` and `cover`> | |
 
 ## Decorations (TH13–TH17)
 | Element | Where | Size / count | Opacity | Motion (keyframe, duration) |
@@ -71,9 +102,9 @@ New keyframes: <name: what it does, or "none">
 | `intro` | under "Begin a new tale" | |
 | `ideaPlaceholder` | idea box | |
 | `createButton` | create button (≤ 20) | |
-| `creating` | loader while creating | |
-| `choosing` | loader while choosing | |
-| `slow` | loader after 10 s | |
+| `creating` | status line while creating | |
+| `choosing` | blank page and status line while choosing | |
+| `slow` | status line after 10 s | |
 | `customPlaceholder` | custom action box | |
 | `listHeading` | home list heading | |
 | `listLoading` | while the list loads | |
@@ -98,9 +129,9 @@ Trial stories (TH27):
 ## Build checklist
 - [ ] Sheet approved
 - [ ] Backend: id in `schemas.ThemeId`, line in `llm.MOODS`; `./test.sh`
-- [ ] `index.css`: `[data-theme='<id>']` block with all tokens + extras; new keyframes in `@theme`
+- [ ] `index.css`: `[data-theme='<id>']` block with all tokens (incl. `page-*`, `cover`, `cover-deep`, `foil`) + extras; new keyframes in `@theme`
 - [ ] `index.html`: display font added to the Google Fonts link
-- [ ] `frontend/src/themes/<id>/`: `PickerIcon`, `Icon`, `CardCorner`, `Decor`
+- [ ] `frontend/src/themes/<id>/`: `PickerIcon`, `Icon`, `CardCorner`, `Decor`, `Quill`
 - [ ] `themes.ts`: `ThemeId` union + `THEMES` entry (label, festival, components, copy)
 - [ ] Default windows in the other theme sheets updated (a new festival shortens a neighbour's window)
 - [ ] Trial stories done and noted above

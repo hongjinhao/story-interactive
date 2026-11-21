@@ -44,6 +44,39 @@ Contrast:
 | `field` on `bg` | 3:1 | 3.8:1 |
 | `muted` @ 70% on `bg` | 3:1 | 5.0:1 |
 
+## Paper and cover (`SPEC-3.md`, TH8, TH10)
+The book's pages are the one light surface in the app. These tokens are used only inside the book (TH10).
+
+| Token | Hex | Use | Notes |
+|---|---|---|---|
+| `page` | `#efe4cc` | paper | |
+| `page-back` | `#e2d4b6` | back of a turning page, the left-side strip | decorative |
+| `page-ink` | `#2b2118` | passage and body text on paper | |
+| `page-muted` | `#5e5146` | secondary text on paper | |
+| `page-edge` | `#7a6650` | input and button borders on paper | |
+| `page-shade` | `#ddd1b9` | the grey action box | |
+| `page-accent` | `#5b2a86` | story title, primary button, focus ring on paper | |
+| `page-success` | `#2f6b2a` | explored marker on paper | |
+| `page-danger` | `#a3242a` | errors on paper | |
+| `cover` | `#2a1838` | the book cover | decorative |
+| `cover-deep` | `#160c20` | the cover's shadow and inside | decorative |
+| `foil` | `#ffb25e` | writing and frame on the cover | |
+
+Contrast:
+| Pair | Minimum | Ratio |
+|---|---|---|
+| `page-ink` on `page` | 7:1 | 12.5:1 |
+| `page-ink` on `page-shade` (action box) | 7:1 | 10.4:1 |
+| `page-muted` on `page` | 4.5:1 | 6.1:1 |
+| `page-accent` on `page` | 4.5:1 | 7.8:1 |
+| `page-success` on `page` | 4.5:1 | 5.1:1 |
+| `page-danger` on `page` | 4.5:1 | 5.9:1 |
+| `page` text on `page-accent` (primary button) | 4.5:1 | 7.8:1 |
+| `page-edge` on `page` | 3:1 | 4.3:1 |
+| `foil` on `cover` | 4.5:1 | 9.2:1 |
+
+Old parchment with sepia ink; `page-accent` is a deep violet so the paper keeps the haunted feel. `foil` is the pumpkin glow on a midnight-purple cover.
+
 ## Type
 | Role | Font |
 |---|---|
@@ -55,8 +88,9 @@ Contrast:
 | Component | What it shows | Colours |
 |---|---|---|
 | `PickerIcon` (`Pumpkin.tsx`, new) | Flat pumpkin: slightly squashed round body, two shallow rib notches, short stem. No face. | `currentColor` |
-| `Icon` (`Ghost.tsx`) | Sheet ghost with a round head, wavy hem, two eyes and a mouth | `ink` body, `bg` face |
+| `Icon` (`Ghost.tsx`) | Peeks over the book. Sheet ghost with a round head, wavy hem, two eyes and a mouth | `ink` body, `bg` face |
 | `CardCorner` (`Cobweb.tsx`) | Corner cobweb, rotated into the card's bottom-right corner | `ink` strokes, 15% |
+| `Quill` (`Quill.tsx`, TH32) | A gloved hand holding a dark crow quill, nib at the bottom-left. Shown only while writing. | glove `muted` with a `page-ink` outline; feather `page-ink` with a `muted` vane line; `foil` nib |
 
 ## Decorations (`HauntedDecor.tsx`)
 | Element | Where | Size / count | Opacity | Motion |
@@ -65,7 +99,7 @@ Contrast:
 | Spiders on threads | top of the page, side margins (lg+) | 3, threads 64–176px | full (`muted` body, `accent` eyes) | `dangle`, 5 s, staggered |
 | Ghosts | side margins (lg+) | 4, 32–56px | 50–60% | `float`, 7 s, staggered |
 | Ghosts | header corners (below lg) | 2, 20–24px | 50% | `float` |
-| Ghost peeking over the story card | card top edge | 1, 40px | 80% | `float` |
+| Ghost peeking over the book | book top edge | 1, 40px | 80% | `float` |
 
 Keyframes: `float` (bob up 12px and back), `dangle` (sway ±4° from the top).
 
@@ -76,9 +110,9 @@ Keyframes: `float` (bob up 12px and back), `dangle` (sway ±4° from the top).
 | `intro` | under "Begin a new tale" | Describe an idea and the spirits will write the story, one choice at a time. Each tale lasts 5 to 10 turns: pick one of two paths, or type your own. |
 | `ideaPlaceholder` | idea box | A lighthouse keeper hears knocking from beneath the waves… |
 | `createButton` | create button | Summon a tale |
-| `creating` | loader while creating | Summoning your tale… |
-| `choosing` | loader while choosing | The tale unfolds… |
-| `slow` | loader after 10 s | The spirits are slow tonight… still working. |
+| `creating` | status line while creating | Summoning your tale… |
+| `choosing` | blank page and status line while choosing | The tale unfolds… |
+| `slow` | status line after 10 s | The spirits are slow tonight… still working. |
 | `customPlaceholder` | custom action box | Whistle back at the raven… |
 | `listHeading` | home list heading | Tales already told |
 | `listLoading` | while the list loads | Gathering the tales… |

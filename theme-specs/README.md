@@ -36,7 +36,7 @@ These are fixed. A theme sheet can't override them. Changing one means changing 
 - TH6. The sheet lists the resulting default window (e.g. "Nov 8 – Jan 1"). A new festival shortens a
   neighbour's window, so update that sheet too. The sheets are the only place the windows are written down.
 
-### Colours (all ten tokens, no others used for text)
+### Colours (the ten screen tokens plus the paper tokens; no others used for text)
 - TH7. Every token is set: `bg`, `surface`, `edge`, `field`, `ink`, `muted`, `accent`, `success`,
   `danger`, plus `font-display`. Values are hex. Tokens keep their job in every theme (e.g. `accent` is
   always the primary button, focus ring and headings).
@@ -47,12 +47,20 @@ These are fixed. A theme sheet can't override them. Changing one means changing 
   - `field` on `surface` and `bg` ≥ 3:1 (input borders must be findable)
   - `muted` at 70% opacity on `bg` ≥ 3:1 (unselected picker icons)
   - `edge` and theme-only extras are decorative and have no minimum, and are never used for text.
+  - On the book's paper (`page`, `SPEC-3.md`): `page-ink` on `page` and on `page-shade` ≥ 7:1; `page-muted`,
+    `page-accent`, `page-success`, `page-danger` on `page` ≥ 4.5:1; `page` text on `page-accent` (primary
+    button) ≥ 4.5:1; `page-edge` on `page` ≥ 3:1 (borders must be findable); `foil` on `cover` ≥ 4.5:1.
+    `page-back`, `cover-deep` are decorative and never used for text.
 - TH9. `danger` must be clearly different from any decorative colour, so an error never looks like decoration.
-- TH10. All themes are dark for now (`color-scheme: dark` is global). A light theme needs a change to `SPECS-2.md`.
+- TH10. All themes are dark for now (`color-scheme: dark` is global), except the book's paper, which uses the
+  `page-*` tokens. Those tokens are used only inside the book, never elsewhere on the screen. A light theme
+  needs a change to `SPECS-2.md`.
 
 ### Type
 - TH11. `font-display` is for headings only (page title, section headings, story title, "The End").
-  Passages are always Lora 18px. Buttons, inputs and body text use the system sans. Never change these.
+  Passages are always Lora 18px, and may step down to 16px only to fit the fixed page (`SPEC-3.md` R23). The
+  action box and the quill's writing use Lora too. Buttons, inputs and body text use the system sans. Never
+  change these.
 - TH12. The display font is on Google Fonts (added to the link in `index.html`), falls back to
   `"Lora", Georgia, serif`, and is still readable at `text-2xl`: check "The End" and a long story title.
 
@@ -63,23 +71,29 @@ These are fixed. A theme sheet can't override them. Changing one means changing 
 - TH15. Most decorations sit in the side margins (lg and up). Below lg, at most 2–3 small ones in the
   header's empty corners. Opacity 15–80%.
 - TH16. Motion is slow and gentle (no flashing, nothing faster than one cycle per 3 s, no more than 3
-  flashes per second ever), and every moving element has `motion-reduce:animate-none`.
+  flashes per second ever), and every moving element has `motion-reduce:animate-none`. The quill's quick
+  wiggle and tap are short, one-off loading motion while it writes, not decoration: they're exempt from the
+  3-second rule but stop entirely with reduced motion (no quill at all).
 - TH17. New keyframes go in `@theme` in `index.css` with a theme-prefixed or descriptive name.
 
 ### Icons (each a component in `frontend/src/themes/<id>/`)
 - TH18. `PickerIcon`: one flat silhouette, `viewBox="0 0 24 24"`, a single `fill-current` shape, no
   outline, face, gradient, text or animation. Recognisable at 24px in one colour. It must look different
   from every other theme's picker icon at a glance.
-- TH19. `Icon`: used in the loader (~80px) and peeking over the story card (~40px). May have 2–3 token colours.
+- TH19. `Icon`: peeks over the book's top edge (~40px). May have 2–3 token colours.
 - TH20. `CardCorner`: a small corner ornament inside the story card, behind its text, ≤ 20% opacity.
+- TH32. `Quill`: a hand holding a pen, one inline SVG, nib tip at the bottom-left corner of its viewBox, coloured
+  with tokens, readable on both `page` and `cover`, no text. `aria-hidden`, `pointer-events-none`. Only shown
+  while writing (`SPEC-3.md`), never as decoration.
 
 ### Words
 - TH21. Every copy key in the template is filled. Wording sets the mood but must still say what happens:
   the create button still means "create", the slow message still says it's still working.
 - TH22. Lengths: tagline ≤ 60 characters, buttons ≤ 20, other lines ≤ 90. Plain English a 10-year-old can read.
 - TH23. Some words are never themed, so players always find them: "Home", "↑ Go back", "Start over",
-  "Level n of max", "explored", the counters, error details, and the labels "Your story idea" /
-  "Or write your own action".
+  "Page n of max", "explored", the counters, error details, and the labels "Your story idea" /
+  "Or write your own action" (now a screen-reader label only). "What do you do?" and "a player's path"
+  are no longer shown (`SPEC-3.md` D16).
 
 ### Narrator mood
 - TH24. One sentence, starting "Lean …". It sets the mood and setting, and nothing else: it doesn't
